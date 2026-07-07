@@ -2,14 +2,14 @@
 
 MIN_RAM_GB=8
 
-# Check for RAM bypass flag
+echo "Checking system requirements..."
+
+# RAM check
 if [[ " $* " == *" --BYRR "* ]]; then
     echo "RAM check bypassed with --BYRR"
-    echo "this is a unsupported config run at your own risk"
-
+    echo "This is an unsupported config. Run at your own risk."
 else
     MIN_RAM_BYTES=$((MIN_RAM_GB * 1024 * 1024 * 1024))
-
     TOTAL_RAM_BYTES=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo)
 
     if [ "$TOTAL_RAM_BYTES" -lt "$MIN_RAM_BYTES" ]; then
@@ -18,9 +18,7 @@ else
         echo "ERROR: Not enough RAM."
         echo "Required: ${MIN_RAM_GB}GB"
         echo "Detected: ${TOTAL_RAM_GB}GB"
-        echo ""
-        echo "If you want to bypass this check, run:"
-        echo "./start.sh --BYRR"
+        echo "Use ./start.sh --BYRR to bypass."
         exit 1
     fi
 
@@ -40,44 +38,75 @@ else
     echo "Running as root."
 fi
 
-# Start API
-npm run start_api &
-API_PID=$!
+echo "Starting services..."
+sleep 2
 
-# Start frontend
-npm run start_static_ui &
-FRONTEND_PID=$!
 
-# Start Caddy
-cd caddy
-sudo ./caddy run --config ./Caddyfile &
-CADDY_PID=$!
-cd ..
+# Fix ownership before starting
+chown -R nicholas:nicholas mc
 
-#start minecraft server
+
+# Start Minecraft as nicholas
+echo "Starting Minecraft..."
+
+sudo -u nicholas bash -c '
 cd mc
+java -Xmx4096M -Xms4096M -jar paper.jar nogui
+' &
 
-java -Xmx496M -Xms4096M -jar paper.jar nogui &
 MC_PID=$!
 
 
+sleep 60
+
+
+# Start API as nicholas
+echo "Starting API..."
+
+sudo -u nicholas npm run start_api &
+API_PID=$!
+
+
+# Start frontend as nicholas
+echo "Starting frontend..."
+
+sudo -u nicholas npm run start_static_ui &
+FRONTEND_PID=$!
+
+
+sleep 5
+
+
+# Start Caddy as root
+echo "Starting Caddy..."
+
+./caddy/caddy run --config ./caddy/Caddyfile &
+CADDY_PID=$!
+
+
+echo ""
 echo "Running:"
-echo "API PID: $API_PID"
-echo "Frontend PID: $FRONTEND_PID"
-echo "Caddy PID: $CADDY_PID"
-echo "Minecraft Server PID: $MC_PID"
+echo "Minecraft PID: $MC_PID"
+echo "API PID:       $API_PID"
+echo "Frontend PID:  $FRONTEND_PID"
+echo "Caddy PID:     $CADDY_PID"
+
 
 cleanup() {
     echo "Stopping services..."
 
-    kill $API_PID
-    kill $FRONTEND_PID
-    kill $CADDY_PID
-    kill $MC_PID
+    kill "$API_PID" 2>/dev/null
+    kill "$FRONTEND_PID" 2>/dev/null
+    kill "$CADDY_PID" 2>/dev/null
+    kill "$MC_PID" 2>/dev/null
 
-    exit
+    wait
+
+    echo "All services stopped."
 }
+
 
 trap cleanup SIGINT SIGTERM
 
 wait
+

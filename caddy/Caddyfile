@@ -1,11 +1,8 @@
-:443 {
-
+10.10.5.5:443 {
     # API (Express)
+    tls internal
     handle /api/* {
-        @badContent not header Content-Type application/json
-        respond @badContent "API requires JSON" 400
         reverse_proxy 127.0.0.1:3001
     }
-
     reverse_proxy 127.0.0.1:3000
 }

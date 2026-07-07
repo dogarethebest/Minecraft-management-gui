@@ -45,7 +45,7 @@ fi
 
 sudo add-apt-repository universe -y
 sudo apt update
-sudo apt install openjdk-25-jdk -y
+sudo apt install openjdk-21-jre
 
 # Add cloudflare gpg key
 sudo mkdir -p --mode=0755 /usr/share/keyrings
@@ -97,3 +97,5 @@ cp preset/eula.txt mc/eula.txt
 cp preset/server.properties mc/server.properties
 
 echo "Final configuration will be in gui"
+chown -R nicholas:nicholas mc
+./start.sh
