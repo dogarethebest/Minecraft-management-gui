@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
-#!/usr/bin/env bash
 
 MIN_RAM_GB=8
 
 # Check for RAM bypass flag
 if [[ " $* " == *" --BYRR "* ]]; then
     echo "RAM check bypassed with --BYRR"
+    echo "this is a unsupported config run at your own risk"
+
 else
     MIN_RAM_BYTES=$((MIN_RAM_GB * 1024 * 1024 * 1024))
 
@@ -29,6 +30,18 @@ fi
 echo "Continuing installation..."
 
 echo "RAM check passed: ${TOTAL_RAM_GB}GB available"
+
+if [[ " $* " == *" --BYROOT "* ]]; then
+    echo "Root check bypassed with --BYROOT"
+else
+    if [ "$(id -u)" -ne 0 ]; then
+        echo "ERROR: This script must be run as root."
+        echo "Run with sudo or use --BYROOT to bypass this check."
+        exit 1
+    fi
+
+    echo "Running as root."
+fi
 
 sudo add-apt-repository universe -y
 sudo apt update
@@ -77,6 +90,7 @@ curl -L \
 rm response.json
 
 mkdir -p mc
+chmod +x mc/paper.jar
 mv paper.jar mc/paper.jar
 
 cp preset/eula.txt mc/eula.txt
