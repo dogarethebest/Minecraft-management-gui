@@ -1,0 +1,22 @@
+{
+  "name": "minecraft-management-gui",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dogarethebest/Minecraft-management-gui.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dogarethebest/Minecraft-management-gui/issues"
+  },
+  "homepage": "https://github.com/dogarethebest/Minecraft-management-gui#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
