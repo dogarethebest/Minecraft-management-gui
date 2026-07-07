@@ -1,0 +1,11 @@
+:443 {
+
+    # API (Express)
+    handle /api/* {
+        @badContent not header Content-Type application/json
+        respond @badContent "API requires JSON" 400
+        reverse_proxy 127.0.0.1:3001
+    }
+
+    reverse_proxy 127.0.0.1:3000
+}

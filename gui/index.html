@@ -1,110 +1,489 @@
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
+
 <head>
-    <title>mc management</title>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Whitelist Manager</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+
+    margin:0;
+
+    padding:0;
+
+    box-sizing:border-box;
+
+}
+
+body{
+
+    font-family:Inter,sans-serif;
+
+    background:#0f172a;
+
+    color:white;
+
+}
+
+.container{
+
+    width:min(1200px,95%);
+
+    margin:auto;
+
+    padding:40px 0;
+
+}
+
+h1{
+
+    font-size:32px;
+
+    margin-bottom:8px;
+
+}
+
+.subtitle{
+
+    color:#94a3b8;
+
+    margin-bottom:35px;
+
+}
+
+.card{
+
+    background:#1e293b;
+
+    border:1px solid #334155;
+
+    border-radius:14px;
+
+    padding:25px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 10px 30px rgba(0,0,0,.25);
+
+}
+
+.lookup{
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+.lookup input{
+
+    flex:1;
+
+    background:#0f172a;
+
+    border:1px solid #334155;
+
+    color:white;
+
+    padding:14px;
+
+    border-radius:10px;
+
+    font-size:15px;
+
+}
+
+.lookup button{
+
+    background:#3b82f6;
+
+    border:none;
+
+    color:white;
+
+    padding:14px 22px;
+
+    border-radius:10px;
+
+    cursor:pointer;
+
+    font-weight:600;
+
+}
+
+.lookup button:hover{
+
+    background:#2563eb;
+
+}
+
+.result{
+
+    margin-top:25px;
+
+    display:none;
+
+    align-items:center;
+
+    gap:20px;
+
+}
+
+.result img{
+
+    width:72px;
+
+    height:72px;
+
+    image-rendering:pixelated;
+
+    border-radius:10px;
+
+    background:#0f172a;
+
+}
+
+.result h3{
+
+    margin-bottom:5px;
+
+}
+
+.result p{
+
+    color:#94a3b8;
+
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+thead{
+
+    background:#0f172a;
+
+}
+
+th,td{
+
+    padding:16px;
+
+    text-align:left;
+
+}
+
+tbody tr{
+
+    border-top:1px solid #334155;
+
+}
+
+tbody tr:hover{
+
+    background:#273449;
+
+}
+
+.player{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+}
+
+.player img{
+
+    width:42px;
+
+    image-rendering:pixelated;
+
+}
+
+.badge{
+
+    background:#14532d;
+
+    color:#bbf7d0;
+
+    padding:4px 10px;
+
+    border-radius:20px;
+
+    font-size:13px;
+
+}
+
+.actions button{
+
+    background:#ef4444;
+
+    border:none;
+
+    color:white;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+}
+
+.actions button:hover{
+
+    background:#dc2626;
+
+}
+
+</style>
+
 </head>
+
 <body>
-    <header>
-        <h1>Minecraft management console</h1>
-    </header>
-    <main>
-        <p>This is the main content of the page.</p>
-    </main>
-  <footer>
 
-    <button class="button-icon" onclick="window.open('https://github.com/', '_blank')">
+<div class="container">
 
-        <div class="icon">
+<h1>Whitelist Manager</h1>
 
-            <svg viewBox="0 0 24 24">
+<p class="subtitle">
 
-                <path
+Manage players that can join your PaperMC server.
 
-                    d="M12 0.296997C5.37 0.296997 0 5.67 0 12.297C0 17.6 3.438 22.097 8.205 23.682C8.805 23.795 9.025 23.424 9.025 23.105C9.025 22.82 9.015 22.065 9.01 21.065C5.672 21.789 4.968 19.455 4.968 19.455C4.422 18.07 3.633 17.7 3.633 17.7C2.546 16.956 3.717 16.971 3.717 16.971C4.922 17.055 5.555 18.207 5.555 18.207C6.625 20.042 8.364 19.512 9.05 19.205C9.158 18.429 9.467 17.9 9.81 17.6C7.145 17.3 4.344 16.268 4.344 11.67C4.344 10.36 4.809 9.29 5.579 8.45C5.444 8.147 5.039 6.927 5.684 5.274C5.684 5.274 6.689 4.952 8.984 6.504C9.944 6.237 10.964 6.105 11.984 6.099C13.004 6.105 14.024 6.237 14.984 6.504C17.264 4.952 18.269 5.274 18.269 5.274C18.914 6.927 18.509 8.147 18.389 8.45C19.154 9.29 19.619 10.36 19.619 11.67C19.619 16.28 16.814 17.295 14.144 17.59C14.564 17.95 14.954 18.686 14.954 19.81C14.954 21.416 14.939 22.706 14.939 23.096C14.939 23.411 15.149 23.786 15.764 23.666C20.565 22.092 24 17.592 24 12.297C24 5.67 18.627 0.296997 12 0.296997Z"
+</p>
 
-                    fill="#222229">
+<div class="card">
 
-                </path>
+<h2 style="margin-bottom:20px;">Lookup Minecraft Player</h2>
 
-            </svg>
+<div class="lookup">
 
-        </div>
+<input
 
-        <div class="cube">
+id="username"
 
-            <span class="side front">hover me</span>
+placeholder="Enter Minecraft username">
 
-            <span class="side top">check it on github</span>
+<button onclick="lookupPlayer()">Lookup</button>
 
-        </div>
+</div>
 
-    </button>
+<div class="result" id="result">
 
-</footer>
+<img id="head">
 
+<div>
 
-    <style>
-        /* From Uiverse.io by aguerquin */ 
-        .button-icon {
-        display: flex;
-        border: 3px #fff solid;
-        width: fit-content;
-        height: fit-content;
-        cursor: pointer;
+<h3 id="playerName">Player</h3>
+
+<p>
+
+UUID:
+
+<span id="uuid"></span>
+
+</p>
+
+<p style="margin-top:6px;">
+
+Status:
+
+<span class="badge">Ready to Add</span>
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h2 style="margin-bottom:20px;">Current Whitelist</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Player</th>
+
+<th>UUID</th>
+
+<th>Status</th>
+
+<th></th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+
+<td>
+
+<div class="player">
+
+<img src="https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7">
+
+Steve
+
+</div>
+
+</td>
+
+<td>8667ba71-b85a-4004-af54-457a9734eed7</td>
+
+<td>
+
+<span class="badge">Whitelisted</span>
+
+</td>
+
+<td class="actions">
+
+<button>Remove</button>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<div class="player">
+
+<img src="https://crafatar.com/avatars/ec561538f3fd461daff5086b22154bce">
+
+Alex
+
+</div>
+
+</td>
+
+<td>ec561538-f3fd-461d-aff5-086b22154bce</td>
+
+<td>
+
+<span class="badge">Whitelisted</span>
+
+</td>
+
+<td class="actions">
+
+<button>Remove</button>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>
+
+<div class="player">
+
+<img src="https://crafatar.com/avatars/069a79f444e94726a5befca90e38aaf5">
+
+Notch
+
+</div>
+
+</td>
+
+<td>069a79f4-44e9-4726-a5be-fca90e38aaf5</td>
+
+<td>
+
+<span class="badge">Whitelisted</span>
+
+</td>
+
+<td class="actions">
+
+<button>Remove</button>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+async function lookupPlayer(){
+
+    const username=document.getElementById("username").value.trim();
+
+    if(!username) return;
+
+    try{
+
+        const response=await fetch(
+
+            `https://api.minecraftservices.com/minecraft/profile/lookup/name/${encodeURIComponent(username)}`
+
+        );
+
+        if(!response.ok){
+
+            alert("Player not found.");
+
+            return;
+
         }
 
-        .icon {
-        background-color: #fff;
-        padding: 10px 10px 5px 10px;
-        }
+        const data=await response.json();
 
-        .icon svg {
-        width: 25px;
-        height: 25px;
-        }
+        document.getElementById("result").style.display="flex";
 
-        .cube {
-        transition: all 0.4s;
-        transform-style: preserve-3d;
-        width: 200px;
-        height: 20px;
-        }
+        document.getElementById("playerName").innerText=data.name;
 
-        .button-icon:hover {
-        border-color: #ff98a2;
-        }
+        document.getElementById("uuid").innerText=data.id;
 
-        .button-icon:hover .cube {
-        transform: rotateX(90deg);
-        }
+        document.getElementById("head").src=
 
-        .side {
-        position: absolute;
-        height: 47px;
-        width: 200px;
-        display: flex;
-        font-size: 0.8em;
-        justify-content: center;
-        align-items: center;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: bold;
-        }
+            `https://crafatar.com/avatars/${data.id}?size=72`;
 
-        .top {
-        background: #ff98a2;
-        color: #fff;
-        transform: rotateX(-90deg) translate3d(0, 13.5px, 2em);
-        }
+    }
 
-        .front {
-        background: #222229;
-        color: #fff;
-        transform: translate3d(0, 0, 1em);
-        }
-        body {
-            background-color: #000000;
-        }
-    </style>
+    catch(err){
+
+        alert("Unable to contact Mojang.");
+
+    }
+
+}
+
+</script>
+
 </body>
+
 </html>

@@ -4,7 +4,8 @@
   "description": "",
   "main": "test.js",
   "scripts": {
-    "test": "node test.js"
+    "start_static_ui": "node code/webui.js",
+    "start_api": "node code/api/index.js"
   },
   "repository": {
     "type": "git",
