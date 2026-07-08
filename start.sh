@@ -28,6 +28,7 @@ fi
 
 if [[ " $* " == *" --BYROOT "* ]]; then
     echo "Root check bypassed with --BYROOT"
+    echo "this is a unsupported config run at your own risk"
 else
     if [ "$(id -u)" -ne 0 ]; then
         echo "ERROR: This script must be run as root."
@@ -38,27 +39,51 @@ else
     echo "Running as root."
 fi
 
+
 echo "Starting services..."
 sleep 2
+if [[ " $* " == *" --install "* ]]; then
+    sleep 100
+else
+    # Start Minecraft as nicholas
+    echo "Starting Minecraft..."
+
+    sudo -u nicholas bash -c '
+    cd mc
+    java -Xmx4096M -Xms4096M -jar paper.jar nogui
+    ' &
+    MC_PID=$!
+fi
 
 
-# Fix ownership before starting
-chown -R nicholas:nicholas mc
 
+if [[ " $* " == *" --Domain "* ]]; then
+    echo ""
+    exit 1
 
-# Start Minecraft as nicholas
-echo "Starting Minecraft..."
+else
+    CADDYFILE="./caddy/Caddyfile"
 
-sudo -u nicholas bash -c '
-cd mc
-java -Xmx4096M -Xms4096M -jar paper.jar nogui
-' &
+    # Get current server IP
 
-MC_PID=$!
+    SERVER_IP=$(hostname -I | awk '{print $1}')
 
+    if [ -z "$SERVER_IP" ]; then
 
-sleep 60
+        echo "Could not detect server IP"
 
+        exit 1
+
+    fi
+
+    # Replace any IPv4 address before :443
+
+    sed -i -E "s/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:443/$SERVER_IP:443/g" "$CADDYFILE"
+
+    echo "Updated Caddyfile to use $SERVER_IP:443"
+fi
+
+sleep 59
 
 # Start API as nicholas
 echo "Starting API..."

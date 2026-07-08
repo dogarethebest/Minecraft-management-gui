@@ -18,6 +18,10 @@
   },
   "homepage": "https://github.com/dogarethebest/Minecraft-management-gui#readme",
   "dependencies": {
-    "express": "^5.2.1"
+    "@xterm/addon-fit": "^0.11.0",
+    "@xterm/addon-webgl": "^0.19.0",
+    "@xterm/xterm": "^6.0.0",
+    "express": "^5.2.1",
+    "yaml": "^2.9.0"
   }
 }

@@ -1,6 +1,4 @@
 #!/bin/bash
-
-
 MIN_RAM_GB=8
 echo "Checking system requirements..."
 # Check for RAM bypass flag
@@ -31,6 +29,7 @@ fi
 
 if [[ " $* " == *" --BYROOT "* ]]; then
     echo "Root check bypassed with --BYROOT"
+    echo "this is a unsupported config run at your own risk"    
 else
     if [ "$(id -u)" -ne 0 ]; then
         echo "ERROR: This script must be run as root."
@@ -41,17 +40,19 @@ else
     echo "Running as root."
 fi
 
-sudo ./start.sh&
+sudo ./start.sh --BYROOT --BYRR&
 PID=$!
 sleep 120 #Wait for the Minecraft server to fully start up
 
-./tests/api_username_test.sh
+./tests/api_username_test.sh 
+./tests/test_antixray.sh
 
 cleanup() {
     echo "Stopping services..."
 
     kill $PID
 
+    wait
     exit
 }
 

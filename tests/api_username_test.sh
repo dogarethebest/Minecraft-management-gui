@@ -41,9 +41,7 @@ echo "$WHITELIST" | jq
 echo
 echo
 
-
 UUID=$(echo "$WHITELIST" | jq -r '.[0].uuid')
-
 
 if [ "$UUID" != "null" ] && [ -n "$UUID" ]; then
 
@@ -58,7 +56,6 @@ else
     echo "No UUID found, skipping delete."
 
 fi
-
 
 echo
 echo "== Final whitelist =="

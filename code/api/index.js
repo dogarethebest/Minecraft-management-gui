@@ -1,13 +1,24 @@
 const express = require("express");
 const fs = require("fs");
 const path = require("path");
+const YAML = require("yaml");
 
-const app = express();
+const PAPER_CONFIG_PATH = path.join(
+    __dirname,
+    "..",
+    "..",
+    "mc",
+    "config",
+    "paper-world-defaults.yml"
+);
 
-app.set("trust proxy", "loopback");
-
-app.use(express.json());
-
+const OPERATORS_PATH = path.join(
+    __dirname,
+    "..",
+    "..",
+    "mc",
+    "ops.json"
+);
 
 const WHITELIST_PATH = path.join(
     __dirname,
@@ -17,7 +28,12 @@ const WHITELIST_PATH = path.join(
     "whitelist.json"
 );
 
-console.log("Whitelist:", WHITELIST_PATH);
+const app = express();
+
+app.set("trust proxy", "loopback");
+
+app.use(express.json());
+
 
 
 // Lookup Minecraft Java UUID
@@ -62,7 +78,6 @@ async function getMinecraftUUID(username) {
 
     return null;
 }
-
 
 // Test
 app.get("/api/test", (req, res) => {
@@ -215,15 +230,9 @@ app.delete("/api/whitelist/:uuid", (req, res) => {
 
 });
 
-const OPERATORS_PATH = path.join(
-    __dirname,
-    "..",
-    "..",
-    "mc",
-    "ops.json"
-);
 
-console.log("Operators:", OPERATORS_PATH);
+
+
 
 // Test
 app.get("/api/test", (req, res) => {
@@ -261,7 +270,6 @@ app.get("/api/operators", (req, res) => {
     }
 
 });
-
 
 // Add operator
 app.post("/api/operators", async (req, res) => {
@@ -374,6 +382,83 @@ app.delete("/api/operators/:uuid", (req, res) => {
     res.json({
         success: true
     });
+
+});
+
+
+
+app.get("/api/antixray", (req, res) => {
+
+    if (!fs.existsSync(PAPER_CONFIG_PATH)) {
+        return res.status(404).json({
+            error: "paper-world-defaults.yml not found"
+        });
+    }
+
+    try {
+        const config = YAML.parse(
+            fs.readFileSync(PAPER_CONFIG_PATH, "utf8")
+        );
+
+        res.json({
+            enabled: !!config.anticheat?.["anti-xray"]?.enabled
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            error: "Failed to read Paper configuration"
+        });
+    }
+
+});
+
+app.put("/api/antixray", (req, res) => {
+
+    if (typeof req.body.enabled !== "boolean") {
+        return res.status(400).json({
+            error: "enabled must be true or false"
+        });
+    }
+
+    if (!fs.existsSync(PAPER_CONFIG_PATH)) {
+        return res.status(404).json({
+            error: "paper-world-defaults.yml not found"
+        });
+    }
+
+    try {
+
+        const config = YAML.parse(
+            fs.readFileSync(PAPER_CONFIG_PATH, "utf8")
+        );
+
+        if (!config.anticheat) {
+            config.anticheat = {};
+        }
+
+        if (!config.anticheat["anti-xray"]) {
+            config.anticheat["anti-xray"] = {};
+        }
+
+        config.anticheat["anti-xray"].enabled = req.body.enabled;
+
+        fs.writeFileSync(
+            PAPER_CONFIG_PATH,
+            YAML.stringify(config)
+        );
+
+        res.json({
+            success: true,
+            enabled: req.body.enabled
+        });
+
+    } catch (err) {
+
+        res.status(500).json({
+            error: "Failed to update Paper configuration"
+        });
+
+    }
 
 });
 

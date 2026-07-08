@@ -98,4 +98,26 @@ cp preset/server.properties mc/server.properties
 
 echo "Final configuration will be in gui"
 chown -R nicholas:nicholas mc
-./start.sh
+# Start Minecraft as nicholas
+echo "Starting Minecraft..."
+
+sudo -u nicholas bash -c '
+cd mc
+java -Xmx4096M -Xms4096M -jar paper.jar nogui
+' &
+MC_PID=$!
+
+./start.sh --install
+
+cleanup() {
+    echo "Stopping services..."
+
+    kill "$MC_PID" 2>/dev/null
+
+    wait
+
+    echo "All services stopped."
+}
+trap cleanup SIGINT SIGTERM
+
+wait
