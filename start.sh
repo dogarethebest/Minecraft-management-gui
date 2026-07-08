@@ -1,5 +1,5 @@
 #!/bin/bash
-
+cd "$(dirname "$0")"
 MIN_RAM_GB=8
 
 echo "Checking system requirements..."

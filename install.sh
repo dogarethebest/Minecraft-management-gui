@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 MIN_RAM_GB=8
 
 # Check for RAM bypass flag
@@ -41,6 +40,49 @@ else
     fi
 
     echo "Running as root."
+fi
+
+if [[ " $* " == *" --NOSERVICE "* ]]; then
+    echo " The service will not be created. You will need to start the server manually with ./start.sh"
+else
+    echo "Creating systemd service..."
+
+    cat > /etc/systemd/system/minecraft-manager.service <<EOF
+    [Unit]
+    Description=Minecraft Management Server
+    After=network.target
+
+    [Service]
+    Type=simple
+    WorkingDirectory=$(pwd)
+    ExecStart=$(pwd)/start.sh
+    Restart=always
+    RestartSec=5
+    User=root
+
+    [Install]
+    WantedBy=multi-user.target
+    EOF
+
+
+    echo "Reloading systemd..."
+
+    systemctl daemon-reload
+
+
+    echo "Enabling Minecraft Management service..."
+
+    systemctl enable minecraft-manager.service
+
+
+    echo "Starting Minecraft Management service..."
+
+    systemctl start minecraft-manager.service
+
+
+    echo "Installation complete."
+    echo "Check status with:"
+    echo "systemctl status minecraft-manager"
 fi
 
 sudo add-apt-repository universe -y
