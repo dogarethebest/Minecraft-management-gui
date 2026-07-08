@@ -151,6 +151,16 @@ chown -R nicholas:nicholas mc
 
 echo "Minecraft files installed."
 
+echo "Installing Dynmap plugin..."
+mkdir -p mc/plugins
+cp preset/dynmap.jar mc/plugins/dynmap.jar
+
+git clone https://github.com/Tiiffi/mcrcon.git
+cd mcrcon
+make
+sudo make install
+cd ..
+rm -rf mcrcon
 
 # ----------------------------
 # SYSTEMD SERVICE

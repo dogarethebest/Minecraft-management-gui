@@ -118,7 +118,7 @@ else
 fi
 
 
-sleep 50
+sleep 110
 
 
 # Start API as nicholas
@@ -154,7 +154,7 @@ setsid ./caddy/caddy run --config ./caddy/Caddyfile &
 CADDY_PID=$!
 PIDS+=("$CADDY_PID")
 
-
+mcrcon   -H 127.0.0.1   -P 3002   -p "ruf3irfhgi3"   "dynmap fullrender world"
 
 echo ""
 echo "Running:"

@@ -4,5 +4,8 @@
     handle /api/* {
         reverse_proxy 127.0.0.1:3001
     }
+    handle_path /map/* {
+        reverse_proxy 127.0.0.1:8123
+    }
     reverse_proxy 127.0.0.1:3000
 }
