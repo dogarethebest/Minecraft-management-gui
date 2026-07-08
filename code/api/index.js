@@ -35,7 +35,6 @@ app.set("trust proxy", "loopback");
 app.use(express.json());
 
 
-
 // Lookup Minecraft Java UUID
 async function getMinecraftUUID(username) {
 
@@ -229,7 +228,6 @@ app.delete("/api/whitelist/:uuid", (req, res) => {
     });
 
 });
-
 
 
 
