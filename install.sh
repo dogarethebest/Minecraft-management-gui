@@ -69,7 +69,9 @@ echo "Installing dependencies..."
 
 apt update
 
-apt install -y curl jq openjdk-21-jre
+apt install -y curl jq openjdk-21-jre npm
+
+npm install
 
 # ----------------------------
 # DOWNLOAD PAPER
