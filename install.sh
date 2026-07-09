@@ -163,7 +163,6 @@ cd ..
 rm -rf mcrcon
 
 
-
 echo ""
 echo "================================="
 echo "Installation complete."

@@ -1,2 +1,1 @@
-cd /opt/Minecraft-management-gui
-./install.sh
+cd /opt/Minecraft-management-gui && nohup ./install.sh >/dev/null 2>&1 &
