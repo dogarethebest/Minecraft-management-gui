@@ -7,6 +7,7 @@ mkdir -p build/opt/Minecraft-management-gui
 mkdir -p build/lib/systemd/system/
 
 cp resources/control build/DEBIAN/control
+cp resources/postinst uild/DEBIAN/postinst
 cp resources/minecraft-manager.service build/lib/systemd/system/minecraft-manager.service
 cd ..
 
