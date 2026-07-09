@@ -1,2 +1,2 @@
-cd opt/Minecraft-management-gui
+cd /opt/Minecraft-management-gui
 ./install.sh
