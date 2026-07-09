@@ -1,14 +1,11 @@
 10.10.5.5:443 {
-	# API (Express)
-	tls internal
-	handle /api/* {
-		reverse_proxy 127.0.0.1:3001
-	}
-
-	# Embedded Minecraft web map (BlueMap default port)
-	handle /map/* {
-		reverse_proxy 127.0.0.1:8100
-	}
-
-	reverse_proxy 127.0.0.1:3000
+    # API (Express)
+    tls internal
+    handle /api/* {
+        reverse_proxy 127.0.0.1:3001
+    }
+    handle_path /map/* {
+        reverse_proxy 127.0.0.1:8123
+    }
+    reverse_proxy 127.0.0.1:3000
 }

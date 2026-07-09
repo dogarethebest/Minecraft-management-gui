@@ -2,3 +2,4 @@ paper.jar
 /mc
 /node_modules
 /config/saved
+/tests/logs

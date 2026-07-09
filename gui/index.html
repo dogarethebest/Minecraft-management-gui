@@ -3,67 +3,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft Manager | Dashboard</title>
+<title>Minecraft Management GUI</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+    color-scheme:dark;
+    --bg:#07111f;
+    --panel:#0f1b2d;
+    --panel-2:#13233a;
+    --line:#24364f;
+    --muted:#8ea3bd;
+    --text:#eff6ff;
+    --green:#22c55e;
+    --green-soft:rgba(34,197,94,.14);
+    --blue:#38bdf8;
+    --blue-soft:rgba(56,189,248,.14);
+    --red:#ef4444;
+    --red-soft:rgba(239,68,68,.14);
+    --amber:#f59e0b;
+    --shadow:0 24px 80px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+    min-height:100vh;
+    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:
+        radial-gradient(circle at 12% 12%,rgba(34,197,94,.2),transparent 32rem),
+        radial-gradient(circle at 82% 8%,rgba(56,189,248,.16),transparent 30rem),
+        linear-gradient(135deg,#07111f 0%,#0b1220 55%,#101827 100%);
+    color:var(--text);
+}
+button,input{font:inherit}
+button{border:0;cursor:pointer}
+.app-shell{width:min(1180px,94vw);margin:0 auto;padding:34px 0 48px}
+.hero{
+    display:grid;
+    grid-template-columns:1.5fr .9fr;
+    gap:24px;
+    align-items:stretch;
+    margin-bottom:24px;
+}
+.hero-card,.panel{
+    background:linear-gradient(180deg,rgba(19,35,58,.92),rgba(15,27,45,.92));
+    border:1px solid rgba(148,163,184,.18);
+    border-radius:26px;
+    box-shadow:var(--shadow);
+}
+.hero-card{padding:34px;position:relative;overflow:hidden}
+.hero-card:after{
+    content:"";
+    position:absolute;
+    right:-80px;
+    bottom:-120px;
+    width:310px;
+    height:310px;
+    background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(56,189,248,.16));
+    border-radius:42px;
+    transform:rotate(18deg);
+}
+.kicker{color:#86efac;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:12px}
+h1{font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.05em;max-width:780px;margin-bottom:16px}
+.lead{color:#b6c6d8;font-size:17px;line-height:1.7;max-width:720px}
+.quick-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px;position:relative;z-index:1}
+.stat{background:rgba(7,17,31,.64);border:1px solid rgba(148,163,184,.14);border-radius:18px;padding:16px}
+.stat strong{display:block;font-size:28px;margin-bottom:4px}.stat span{color:var(--muted);font-size:13px}
+.status-card{padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}
+.status-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(148,163,184,.14)}
+.status-row:last-child{border-bottom:0}.status-row span{color:var(--muted)}
+.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:700}.pill:before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor}.online{background:var(--green-soft);color:#86efac}.warn{background:rgba(245,158,11,.14);color:#fbbf24}.info{background:var(--blue-soft);color:#7dd3fc}
+.grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:24px}.panel{padding:24px}.panel h2{font-size:20px;margin-bottom:8px}.panel-note{color:var(--muted);line-height:1.6;margin-bottom:20px}.form{display:grid;gap:12px}.field label{display:block;color:#cbd5e1;font-size:13px;font-weight:700;margin-bottom:8px}.field input{width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:14px 15px;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(56,189,248,.12)}
+.button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:14px;padding:13px 14px;font-weight:800;color:#04111f;transition:.18s transform,.18s opacity}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#86efac,#22c55e)}.btn-secondary{background:linear-gradient(135deg,#93c5fd,#38bdf8)}.btn-danger{background:var(--red);color:white;padding:9px 12px;border-radius:12px}.btn-ghost{background:rgba(148,163,184,.12);color:#dbeafe}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.message{display:none;border-radius:14px;padding:12px 14px;font-weight:700;line-height:1.45}.message.show{display:block}.message.success{background:var(--green-soft);color:#bbf7d0}.message.error{background:var(--red-soft);color:#fecaca}.message.info{background:var(--blue-soft);color:#bfdbfe}
+.tabs{display:flex;gap:10px;margin-bottom:18px}.tab{background:rgba(148,163,184,.11);color:#cbd5e1;border-radius:999px;padding:10px 14px;font-weight:800}.tab.active{background:#e0f2fe;color:#082f49}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.search{max-width:300px;width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:11px 15px}.table-wrap{overflow:auto;border:1px solid rgba(148,163,184,.14);border-radius:18px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:15px 16px}th{color:#9fb2c8;font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:rgba(7,17,31,.66)}tbody tr{border-top:1px solid rgba(148,163,184,.12)}tbody tr:hover{background:rgba(148,163,184,.06)}.player{display:flex;align-items:center;gap:12px;font-weight:800}.avatar{width:40px;height:40px;border-radius:10px;background:#07111f;image-rendering:pixelated}.uuid{color:#9fb2c8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}.empty{text-align:center;color:var(--muted);padding:32px!important}.footer-note{margin-top:18px;color:#7f93ad;font-size:13px;line-height:1.5}
+@media (max-width:900px){.hero,.grid{grid-template-columns:1fr}.quick-stats{grid-template-columns:1fr}.button-row{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.search{max-width:none}}
+</style>
 </head>
 <body>
-<div class="app-layout">
-    <aside class="sidebar">
-        <a class="brand" href="index.html"><span class="brand-mark">⛏</span><span><h1>Minecraft Manager</h1><small>No-auth admin console</small></span></a>
-        <nav class="nav" aria-label="Primary navigation">
-            <a class="nav-link" href="index.html">🏠 Dashboard</a>
-            <a class="nav-link" href="players.html">👥 Players</a>
-            <a class="nav-link" href="terminal.html">⌨️ Terminal</a>
-            <a class="nav-link" href="map.html">🗺️ Map</a>
-            <a class="nav-link" href="settings.html">⚙️ Settings</a>
-        </nav>
-        <div class="sidebar-note">Authentication is not enabled. Keep this console behind your trusted network or VPN.</div>
-    </aside>
-
-    <main class="main">
-        <div class="topbar">
-            <div class="page-title">
-                <p class="eyebrow">Overview</p>
-                <h1>Server command center</h1>
-                <p>Monitor API health, jump to the embedded map, manage players, and open the server console from separate pages.</p>
+<main class="app-shell">
+    <section class="hero">
+        <div class="hero-card">
+            <p class="kicker">No-auth preview dashboard</p>
+            <h1>Manage your Minecraft server from a clean web console.</h1>
+            <p class="lead">This preliminary front end connects directly to the existing whitelist and operator API. Authentication is intentionally not included yet, so only expose it on trusted networks.</p>
+            <div class="quick-stats" aria-label="Server list summary">
+                <div class="stat"><strong id="whitelistCount">—</strong><span>Whitelisted players</span></div>
+                <div class="stat"><strong id="operatorCount">—</strong><span>Operators</span></div>
+                <div class="stat"><strong id="apiStatusText">…</strong><span>API status</span></div>
             </div>
-            <span class="pill info" id="apiStatusPill">Checking</span>
         </div>
+        <aside class="status-card hero-card">
+            <div>
+                <h2>Server controls preview</h2>
+                <p class="panel-note">Placeholders for future start, stop, restart, logs, and resource controls.</p>
+            </div>
+            <div>
+                <div class="status-row"><span>Frontend</span><b class="pill online">Loaded</b></div>
+                <div class="status-row"><span>Authentication</span><b class="pill warn">Disabled</b></div>
+                <div class="status-row"><span>API</span><b class="pill info" id="apiStatusPill">Checking</b></div>
+            </div>
+        </aside>
+    </section>
 
-        <section class="grid dashboard-grid" aria-label="Server summary">
-            <article class="card stat-card"><span class="card-label">API</span><strong id="apiStatusText">…</strong><p>Reverse-proxied backend status.</p></article>
-            <article class="card stat-card"><span class="card-label">Server</span><strong id="serverStatus">…</strong><p>Uses `/api/status` when available.</p></article>
-            <article class="card stat-card"><span class="card-label">Whitelist</span><strong id="whitelistCount">—</strong><p>Players allowed to join.</p></article>
-            <article class="card stat-card"><span class="card-label">Operators</span><strong id="operatorCount">—</strong><p>Players with operator access.</p></article>
-        </section>
-
-        <section class="grid two-column">
-            <article class="card">
-                <h3>Quick actions</h3>
-                <p>Use the dedicated pages for common server management tasks.</p>
-                <div class="quick-actions">
-                    <a class="action-card" href="players.html"><strong>Manage players</strong><p>Add, remove, filter whitelist and operator entries.</p></a>
-                    <a class="action-card" href="terminal.html"><strong>Open terminal</strong><p>Use an xterm.js console connected to the terminal API.</p></a>
-                    <a class="action-card" href="map.html"><strong>View map</strong><p>Embed the web map exposed by your server.</p></a>
+    <section class="grid">
+        <aside class="panel">
+            <h2>Add a player</h2>
+            <p class="panel-note">Enter a Java username, then add the account to the whitelist or operators list.</p>
+            <form class="form" id="playerForm">
+                <div class="field">
+                    <label for="username">Minecraft username</label>
+                    <input id="username" name="username" placeholder="Example: Notch" autocomplete="off" required>
                 </div>
-            </article>
-
-            <article class="card">
-                <h3>API details</h3>
-                <div class="status-list">
-                    <div class="status-row"><span class="muted">Host</span><strong id="apiHost">Checking</strong></div>
-                    <div class="status-row"><span class="muted">Protocol</span><strong id="apiProtocol">Checking</strong></div>
-                    <div class="status-row"><span class="muted">Online players</span><strong id="playerOnlineCount">—</strong></div>
-                    <div class="status-row"><span class="muted">Memory</span><strong id="memoryUsage">—</strong></div>
-                    <div class="status-row"><span class="muted">Last backup</span><strong id="lastBackup">Not connected</strong></div>
+                <div class="button-row">
+                    <button class="btn btn-primary" type="submit" data-action="whitelist">Add whitelist</button>
+                    <button class="btn btn-secondary" type="submit" data-action="operators">Make operator</button>
                 </div>
-            </article>
+                <button class="btn btn-ghost" type="button" id="refreshButton">Refresh lists</button>
+                <div class="message" id="message" role="status" aria-live="polite"></div>
+            </form>
+            <p class="footer-note">Tip: run the API behind the included Caddy reverse proxy so browser requests use the same origin at <code>/api</code>.</p>
+        </aside>
+
+        <section class="panel">
+            <div class="toolbar">
+                <div class="tabs" role="tablist" aria-label="Player lists">
+                    <button class="tab active" type="button" data-tab="whitelist">Whitelist</button>
+                    <button class="tab" type="button" data-tab="operators">Operators</button>
+                </div>
+                <input class="search" id="search" placeholder="Filter players or UUIDs" aria-label="Filter players">
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Player</th><th>UUID</th><th>List</th><th>Action</th></tr></thead>
+                    <tbody id="playersBody"><tr><td class="empty" colspan="4">Loading players…</td></tr></tbody>
+                </table>
+            </div>
         </section>
-    </main>
-</div>
-<script src="app.js"></script>
+    </section>
+</main>
+<script>
+const state={activeTab:"whitelist",whitelist:[],operators:[],filter:""};
+const apiBase="";
+const endpoints={whitelist:"/api/whitelist",operators:"/api/operators"};
+const body=document.getElementById("playersBody");
+const message=document.getElementById("message");
+const username=document.getElementById("username");
+
+function formatUuid(uuid){
+    const clean=(uuid||"").replace(/-/g,"");
+    if(clean.length!==32) return uuid||"Unknown";
+    return `${clean.slice(0,8)}-${clean.slice(8,12)}-${clean.slice(12,16)}-${clean.slice(16,20)}-${clean.slice(20)}`;
+}
+function avatar(uuid){return `https://crafatar.com/avatars/${(uuid||"").replace(/-/g,"")}?size=80&overlay`;}
+function setMessage(text,type="info"){
+    message.textContent=text;
+    message.className=`message show ${type}`;
+}
+function clearMessage(){message.className="message";message.textContent="";}
+function setLoading(isLoading){document.querySelectorAll("button").forEach(button=>button.disabled=isLoading);}
+async function request(path,options){
+    const response=await fetch(`${apiBase}${path}`,{headers:{"Content-Type":"application/json"},...options});
+    const payload=await response.json().catch(()=>({}));
+    if(!response.ok) throw new Error(payload.error||"Request failed");
+    return payload;
+}
+async function loadData(){
+    document.getElementById("apiStatusPill").textContent="Checking";
+    try{
+        const [whitelist,operators]=await Promise.all([request(endpoints.whitelist),request(endpoints.operators)]);
+        state.whitelist=Array.isArray(whitelist)?whitelist:[];
+        state.operators=Array.isArray(operators)?operators:[];
+        document.getElementById("whitelistCount").textContent=state.whitelist.length;
+        document.getElementById("operatorCount").textContent=state.operators.length;
+        document.getElementById("apiStatusText").textContent="OK";
+        document.getElementById("apiStatusPill").textContent="Online";
+        document.getElementById("apiStatusPill").className="pill online";
+        renderRows();
+    }catch(error){
+        document.getElementById("apiStatusText").textContent="Off";
+        document.getElementById("apiStatusPill").textContent="Offline";
+        document.getElementById("apiStatusPill").className="pill warn";
+        body.innerHTML=`<tr><td class="empty" colspan="4">Unable to load API data. ${error.message}</td></tr>`;
+    }
+}
+function renderRows(){
+    const rows=state[state.activeTab].filter(player=>`${player.name||""} ${player.uuid||""}`.toLowerCase().includes(state.filter));
+    if(rows.length===0){
+        body.innerHTML=`<tr><td class="empty" colspan="4">No ${state.activeTab} players found.</td></tr>`;
+        return;
+    }
+    body.innerHTML=rows.map(player=>`
+        <tr>
+            <td><div class="player"><img class="avatar" src="${avatar(player.uuid)}" alt=""><span>${player.name||"Unknown"}</span></div></td>
+            <td class="uuid">${formatUuid(player.uuid)}</td>
+            <td><span class="pill ${state.activeTab==="operators"?"info":"online"}">${state.activeTab==="operators"?"Operator":"Whitelisted"}</span></td>
+            <td><button class="btn-danger" type="button" data-remove="${state.activeTab}" data-uuid="${player.uuid}">Remove</button></td>
+        </tr>`).join("");
+}
+document.getElementById("playerForm").addEventListener("submit",async event=>{
+    event.preventDefault();
+    const action=event.submitter.dataset.action;
+    const name=username.value.trim();
+    if(!name) return;
+    setLoading(true);clearMessage();
+    try{
+        const result=await request(endpoints[action],{method:"POST",body:JSON.stringify({username:name})});
+        setMessage(`${result.player.name} added to ${action=== "operators"?"operators":"whitelist"}.`,"success");
+        username.value="";
+        await loadData();
+    }catch(error){setMessage(error.message,"error");}
+    finally{setLoading(false);}
+});
+document.getElementById("refreshButton").addEventListener("click",loadData);
+document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
+    state.activeTab=tab.dataset.tab;
+    document.querySelectorAll(".tab").forEach(item=>item.classList.toggle("active",item===tab));
+    renderRows();
+}));
+document.getElementById("search").addEventListener("input",event=>{state.filter=event.target.value.toLowerCase();renderRows();});
+body.addEventListener("click",async event=>{
+    const button=event.target.closest("[data-remove]");
+    if(!button) return;
+    setLoading(true);clearMessage();
+    try{
+        await request(`${endpoints[button.dataset.remove]}/${button.dataset.uuid}`,{method:"DELETE"});
+        setMessage("Player removed.","success");
+        await loadData();
+    }catch(error){setMessage(error.message,"error");}
+    finally{setLoading(false);}
+});
+loadData();
+</script>
 </body>
 </html>
