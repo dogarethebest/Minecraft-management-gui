@@ -4,6 +4,7 @@ rm -rf build
 
 mkdir -p build/DEBIAN
 mkdir -p build/opt/Minecraft-management-gui
+mkdir -p build/lib/systemd/system/
 
 cp resources/control build/DEBIAN/control
 cp resources/minecraft-manager.service build/lib/systemd/system/minecraft-manager.service
