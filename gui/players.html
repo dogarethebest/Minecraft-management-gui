@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Manager | Players</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <a class="brand" href="index.html"><span class="brand-mark">⛏</span><span><h1>Minecraft Manager</h1><small>No-auth admin console</small></span></a>
+        <nav class="nav" aria-label="Primary navigation">
+            <a class="nav-link" href="index.html">🏠 Dashboard</a>
+            <a class="nav-link" href="players.html">👥 Players</a>
+            <a class="nav-link" href="terminal.html">⌨️ Terminal</a>
+            <a class="nav-link" href="map.html">🗺️ Map</a>
+            <a class="nav-link" href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="sidebar-note">Player changes call the existing whitelist and operator APIs directly.</div>
+    </aside>
+
+    <main class="main">
+        <header class="page-header">
+            <div class="page-title">
+                <p class="eyebrow">Players</p>
+                <h1>Whitelist and operators</h1>
+                <p>Add Java accounts, filter existing entries, and remove users from either list.</p>
+            </div>
+            <div class="tabs" aria-label="Player counts">
+                <span class="pill online"><span id="whitelistCount">—</span> whitelisted</span>
+                <span class="pill info"><span id="operatorCount">—</span> operators</span>
+            </div>
+        </header>
+
+        <section class="grid two-column">
+            <aside class="card">
+                <h3>Add a player</h3>
+                <p>Enter a Minecraft Java username, then choose which list to update.</p>
+                <form class="form" id="playerForm">
+                    <div class="field">
+                        <label for="username">Minecraft username</label>
+                        <input id="username" name="username" placeholder="Example: Notch" autocomplete="off" required>
+                    </div>
+                    <div class="button-row">
+                        <button class="btn btn-primary" type="submit" data-load-lock data-action="whitelist">Add whitelist</button>
+                        <button class="btn btn-secondary" type="submit" data-load-lock data-action="operators">Make operator</button>
+                    </div>
+                    <button class="btn btn-ghost" type="button" data-load-lock id="refreshButton">Refresh lists</button>
+                    <div class="message" id="message" role="status" aria-live="polite"></div>
+                </form>
+            </aside>
+
+            <section class="card">
+                <div class="toolbar">
+                    <div class="tabs" role="tablist" aria-label="Player lists">
+                        <button class="tab active" type="button" data-tab="whitelist">Whitelist</button>
+                        <button class="tab" type="button" data-tab="operators">Operators</button>
+                    </div>
+                    <input class="search" id="search" placeholder="Filter players or UUIDs" aria-label="Filter players">
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Player</th><th>UUID</th><th>List</th><th>Action</th></tr></thead>
+                        <tbody id="playersBody"><tr><td class="empty" colspan="4">Loading players…</td></tr></tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+    </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

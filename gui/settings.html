@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Manager | Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-layout">
+    <aside class="sidebar">
+        <a class="brand" href="index.html"><span class="brand-mark">⛏</span><span><h1>Minecraft Manager</h1><small>No-auth admin console</small></span></a>
+        <nav class="nav" aria-label="Primary navigation">
+            <a class="nav-link" href="index.html">🏠 Dashboard</a>
+            <a class="nav-link" href="players.html">👥 Players</a>
+            <a class="nav-link" href="terminal.html">⌨️ Terminal</a>
+            <a class="nav-link" href="map.html">🗺️ Map</a>
+            <a class="nav-link" href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="sidebar-note">These cards are wired as a front-end shell for the management APIs as they are added.</div>
+    </aside>
+
+    <main class="main">
+        <header class="page-header">
+            <div class="page-title">
+                <p class="eyebrow">Settings</p>
+                <h1>Server management</h1>
+                <p>Landing page for server properties, backups, and maintenance operations.</p>
+            </div>
+            <span class="pill info" id="apiStatusPill">Checking</span>
+        </header>
+
+        <section class="grid settings-grid">
+            <article class="card">
+                <h3>Server properties</h3>
+                <p>Future API target: `/api/properties`. Use this panel for MOTD, player limits, difficulty, and world settings.</p>
+                <div class="status-list">
+                    <div class="status-row"><span class="muted">MOTD</span><strong>A Minecraft Server</strong></div>
+                    <div class="status-row"><span class="muted">Port</span><strong>25565</strong></div>
+                    <div class="status-row"><span class="muted">Level name</span><strong>world</strong></div>
+                </div>
+            </article>
+
+            <article class="card">
+                <h3>Maintenance</h3>
+                <p>Placeholders for start, stop, restart, backup, and restore calls once the backend exposes them.</p>
+                <div class="button-row">
+                    <button class="btn btn-primary" type="button" disabled>Start</button>
+                    <button class="btn btn-danger" type="button" disabled>Stop</button>
+                    <button class="btn btn-secondary" type="button" disabled>Restart</button>
+                    <button class="btn btn-ghost" type="button" disabled>Backup</button>
+                </div>
+            </article>
+
+            <article class="card">
+                <h3>Map configuration</h3>
+                <p>The map page defaults to `/map/`. If your map is on another path, pass it as a query string or save it from the map page.</p>
+                <a class="btn btn-secondary" href="map.html">Configure map embed</a>
+            </article>
+
+            <article class="card">
+                <h3>Console configuration</h3>
+                <p>The terminal page attempts a WebSocket at `/api/terminal` and command POSTs to `/api/terminal/command`.</p>
+                <a class="btn btn-primary" href="terminal.html">Open terminal</a>
+            </article>
+        </section>
+    </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
