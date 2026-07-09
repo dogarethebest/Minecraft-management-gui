@@ -162,59 +162,6 @@ sudo make install
 cd ..
 rm -rf mcrcon
 
-# ----------------------------
-# SYSTEMD SERVICE
-# ----------------------------
-
-if [[ " $* " == *" --NOSERVICE "* ]]; then
-
-    echo "Service creation skipped with --NOSERVICE"
-    echo "Start manually with:"
-    echo "./start.sh"
-
-else
-
-
-    echo "Creating systemd service..."
-
-
-    INSTALL_PATH=$(pwd)
-
-
-    cat > /etc/systemd/system/minecraft-manager.service <<EOF
-[Unit]
-Description=Minecraft Management Server
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirectory=$INSTALL_PATH
-ExecStart=$INSTALL_PATH/start.sh
-Restart=always
-RestartSec=5
-User=root
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-
-    echo "Reloading systemd..."
-
-    systemctl daemon-reload
-
-
-    echo "Enabling service..."
-
-    systemctl enable minecraft-manager.service
-
-
-    echo "Starting service..."
-
-    systemctl start minecraft-manager.service
-
-
-fi
 
 
 echo ""

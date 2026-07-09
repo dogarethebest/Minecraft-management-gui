@@ -1,0 +1,10 @@
+Package: minecraft-management-gui
+Version: 1.0.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Nicholas
+Depends: curl, jq, openjdk-21-jre, npm
+Description: Minecraft server management GUI
+ A web-based management interface for controlling Minecraft servers.
+ 

@@ -3,3 +3,4 @@ paper.jar
 /node_modules
 /config/saved
 /tests/logs
+/compiler/build/

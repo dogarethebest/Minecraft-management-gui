@@ -1,0 +1,14 @@
+[Unit]
+Description=Minecraft Management Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/Minecraft-management-gui
+ExecStart=/opt/Minecraft-management-gui/start.sh
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
