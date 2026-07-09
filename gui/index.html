@@ -3,235 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Minecraft Management GUI</title>
+<title>Minecraft Management Console</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{
-    color-scheme:dark;
-    --bg:#07111f;
-    --panel:#0f1b2d;
-    --panel-2:#13233a;
-    --line:#24364f;
-    --muted:#8ea3bd;
-    --text:#eff6ff;
-    --green:#22c55e;
-    --green-soft:rgba(34,197,94,.14);
-    --blue:#38bdf8;
-    --blue-soft:rgba(56,189,248,.14);
-    --red:#ef4444;
-    --red-soft:rgba(239,68,68,.14);
-    --amber:#f59e0b;
-    --shadow:0 24px 80px rgba(0,0,0,.35);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{
-    min-height:100vh;
-    font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    background:
-        radial-gradient(circle at 12% 12%,rgba(34,197,94,.2),transparent 32rem),
-        radial-gradient(circle at 82% 8%,rgba(56,189,248,.16),transparent 30rem),
-        linear-gradient(135deg,#07111f 0%,#0b1220 55%,#101827 100%);
-    color:var(--text);
-}
-button,input{font:inherit}
-button{border:0;cursor:pointer}
-.app-shell{width:min(1180px,94vw);margin:0 auto;padding:34px 0 48px}
-.hero{
-    display:grid;
-    grid-template-columns:1.5fr .9fr;
-    gap:24px;
-    align-items:stretch;
-    margin-bottom:24px;
-}
-.hero-card,.panel{
-    background:linear-gradient(180deg,rgba(19,35,58,.92),rgba(15,27,45,.92));
-    border:1px solid rgba(148,163,184,.18);
-    border-radius:26px;
-    box-shadow:var(--shadow);
-}
-.hero-card{padding:34px;position:relative;overflow:hidden}
-.hero-card:after{
-    content:"";
-    position:absolute;
-    right:-80px;
-    bottom:-120px;
-    width:310px;
-    height:310px;
-    background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(56,189,248,.16));
-    border-radius:42px;
-    transform:rotate(18deg);
-}
-.kicker{color:#86efac;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:12px}
-h1{font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.05em;max-width:780px;margin-bottom:16px}
-.lead{color:#b6c6d8;font-size:17px;line-height:1.7;max-width:720px}
-.quick-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px;position:relative;z-index:1}
-.stat{background:rgba(7,17,31,.64);border:1px solid rgba(148,163,184,.14);border-radius:18px;padding:16px}
-.stat strong{display:block;font-size:28px;margin-bottom:4px}.stat span{color:var(--muted);font-size:13px}
-.status-card{padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}
-.status-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(148,163,184,.14)}
-.status-row:last-child{border-bottom:0}.status-row span{color:var(--muted)}
-.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:700}.pill:before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor}.online{background:var(--green-soft);color:#86efac}.warn{background:rgba(245,158,11,.14);color:#fbbf24}.info{background:var(--blue-soft);color:#7dd3fc}
-.grid{display:grid;grid-template-columns:.78fr 1.22fr;gap:24px}.panel{padding:24px}.panel h2{font-size:20px;margin-bottom:8px}.panel-note{color:var(--muted);line-height:1.6;margin-bottom:20px}.form{display:grid;gap:12px}.field label{display:block;color:#cbd5e1;font-size:13px;font-weight:700;margin-bottom:8px}.field input{width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:14px 15px;outline:none}.field input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(56,189,248,.12)}
-.button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:14px;padding:13px 14px;font-weight:800;color:#04111f;transition:.18s transform,.18s opacity}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#86efac,#22c55e)}.btn-secondary{background:linear-gradient(135deg,#93c5fd,#38bdf8)}.btn-danger{background:var(--red);color:white;padding:9px 12px;border-radius:12px}.btn-ghost{background:rgba(148,163,184,.12);color:#dbeafe}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.message{display:none;border-radius:14px;padding:12px 14px;font-weight:700;line-height:1.45}.message.show{display:block}.message.success{background:var(--green-soft);color:#bbf7d0}.message.error{background:var(--red-soft);color:#fecaca}.message.info{background:var(--blue-soft);color:#bfdbfe}
-.tabs{display:flex;gap:10px;margin-bottom:18px}.tab{background:rgba(148,163,184,.11);color:#cbd5e1;border-radius:999px;padding:10px 14px;font-weight:800}.tab.active{background:#e0f2fe;color:#082f49}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.search{max-width:300px;width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:11px 15px}.table-wrap{overflow:auto;border:1px solid rgba(148,163,184,.14);border-radius:18px}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:15px 16px}th{color:#9fb2c8;font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:rgba(7,17,31,.66)}tbody tr{border-top:1px solid rgba(148,163,184,.12)}tbody tr:hover{background:rgba(148,163,184,.06)}.player{display:flex;align-items:center;gap:12px;font-weight:800}.avatar{width:40px;height:40px;border-radius:10px;background:#07111f;image-rendering:pixelated}.uuid{color:#9fb2c8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}.empty{text-align:center;color:var(--muted);padding:32px!important}.footer-note{margin-top:18px;color:#7f93ad;font-size:13px;line-height:1.5}
-@media (max-width:900px){.hero,.grid{grid-template-columns:1fr}.quick-stats{grid-template-columns:1fr}.button-row{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.search{max-width:none}}
+:root{color-scheme:dark;--bg:#07111f;--panel:#0f1b2d;--panel-2:#13233a;--line:#24364f;--muted:#8ea3bd;--text:#eff6ff;--green:#22c55e;--green-soft:rgba(34,197,94,.14);--blue:#38bdf8;--blue-soft:rgba(56,189,248,.14);--red:#ef4444;--red-soft:rgba(239,68,68,.14);--amber:#f59e0b;--amber-soft:rgba(245,158,11,.14);--shadow:0 24px 80px rgba(0,0,0,.35)}
+*{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 12% 12%,rgba(34,197,94,.2),transparent 32rem),radial-gradient(circle at 82% 8%,rgba(56,189,248,.16),transparent 30rem),linear-gradient(135deg,#07111f 0%,#0b1220 55%,#101827 100%);color:var(--text)}button,input,select{font:inherit}button{border:0;cursor:pointer}.app-shell{width:min(1360px,94vw);margin:0 auto;padding:34px 0 48px}.hero{display:grid;grid-template-columns:1.55fr .85fr;gap:24px;align-items:stretch;margin-bottom:24px}.hero-card,.panel{background:linear-gradient(180deg,rgba(19,35,58,.94),rgba(15,27,45,.94));border:1px solid rgba(148,163,184,.18);border-radius:26px;box-shadow:var(--shadow)}.hero-card{padding:34px;position:relative;overflow:hidden}.hero-card:after{content:"";position:absolute;right:-80px;bottom:-120px;width:310px;height:310px;background:linear-gradient(135deg,rgba(34,197,94,.34),rgba(56,189,248,.16));border-radius:42px;transform:rotate(18deg)}.kicker{color:#86efac;font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;margin-bottom:12px}h1{font-size:clamp(34px,5vw,58px);line-height:1;letter-spacing:-.05em;max-width:820px;margin-bottom:16px}.lead{color:#b6c6d8;font-size:17px;line-height:1.7;max-width:790px}.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:28px;position:relative;z-index:1}.stat{background:rgba(7,17,31,.64);border:1px solid rgba(148,163,184,.14);border-radius:18px;padding:16px}.stat strong{display:block;font-size:28px;margin-bottom:4px}.stat span{color:var(--muted);font-size:13px}.status-card{padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:18px}.status-row{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:14px 0;border-bottom:1px solid rgba(148,163,184,.14)}.status-row:last-child{border-bottom:0}.status-row span{color:var(--muted)}.pill{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:7px 11px;font-size:13px;font-weight:800}.pill:before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor}.online{background:var(--green-soft);color:#86efac}.warn{background:var(--amber-soft);color:#fbbf24}.info{background:var(--blue-soft);color:#7dd3fc}.bad{background:var(--red-soft);color:#fecaca}.grid{display:grid;grid-template-columns:.72fr 1.28fr;gap:24px}.panel{padding:24px}.panel h2{font-size:20px;margin-bottom:8px}.panel h3{font-size:16px;margin:22px 0 10px}.panel-note{color:var(--muted);line-height:1.6;margin-bottom:20px}.form{display:grid;gap:12px}.field label{display:block;color:#cbd5e1;font-size:13px;font-weight:800;margin-bottom:8px}.field input,.field select{width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:14px;padding:14px 15px;outline:none}.field input:focus,.field select:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(56,189,248,.12)}.button-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.btn{display:inline-flex;justify-content:center;align-items:center;gap:8px;border-radius:14px;padding:13px 14px;font-weight:800;color:#04111f;transition:.18s transform,.18s opacity}.btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,#86efac,#22c55e)}.btn-secondary{background:linear-gradient(135deg,#93c5fd,#38bdf8)}.btn-danger{background:var(--red);color:white;padding:9px 12px;border-radius:12px}.btn-ghost{background:rgba(148,163,184,.12);color:#dbeafe}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.message{display:none;border-radius:14px;padding:12px 14px;font-weight:700;line-height:1.45}.message.show{display:block}.message.success{background:var(--green-soft);color:#bbf7d0}.message.error{background:var(--red-soft);color:#fecaca}.message.info{background:var(--blue-soft);color:#bfdbfe}.tabs{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}.tab{background:rgba(148,163,184,.11);color:#cbd5e1;border-radius:999px;padding:10px 14px;font-weight:800}.tab.active{background:#e0f2fe;color:#082f49}.toolbar{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.search{max-width:300px;width:100%;background:#081322;border:1px solid var(--line);color:var(--text);border-radius:999px;padding:11px 15px}.table-wrap{overflow:auto;border:1px solid rgba(148,163,184,.14);border-radius:18px}table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:15px 16px}th{color:#9fb2c8;font-size:12px;text-transform:uppercase;letter-spacing:.08em;background:rgba(7,17,31,.66)}tbody tr{border-top:1px solid rgba(148,163,184,.12)}tbody tr:hover{background:rgba(148,163,184,.06)}.player{display:flex;align-items:center;gap:12px;font-weight:800}.avatar{width:40px;height:40px;border-radius:10px;background:#07111f;image-rendering:pixelated}.uuid{color:#9fb2c8;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px}.empty{text-align:center;color:var(--muted);padding:32px!important}.footer-note{margin-top:18px;color:#7f93ad;font-size:13px;line-height:1.5}.properties{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.map-frame{width:100%;height:560px;border:1px solid rgba(148,163,184,.18);border-radius:20px;background:#07111f}.hidden{display:none}.endpoint-list{display:grid;gap:9px;margin-top:12px}.endpoint{display:flex;justify-content:space-between;gap:12px;color:#cbd5e1;background:rgba(7,17,31,.42);border:1px solid rgba(148,163,184,.12);border-radius:14px;padding:11px 12px}.endpoint code{color:#93c5fd}.split{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media (max-width:980px){.hero,.grid,.properties,.split{grid-template-columns:1fr}.quick-stats{grid-template-columns:repeat(2,1fr)}.button-row{grid-template-columns:1fr}.toolbar{align-items:stretch;flex-direction:column}.search{max-width:none}}@media (max-width:560px){.quick-stats{grid-template-columns:1fr}.app-shell{width:min(100% - 24px,1360px)}}
 </style>
 </head>
 <body>
 <main class="app-shell">
-    <section class="hero">
-        <div class="hero-card">
-            <p class="kicker">No-auth preview dashboard</p>
-            <h1>Manage your Minecraft server from a clean web console.</h1>
-            <p class="lead">This preliminary front end connects directly to the existing whitelist and operator API. Authentication is intentionally not included yet, so only expose it on trusted networks.</p>
-            <div class="quick-stats" aria-label="Server list summary">
-                <div class="stat"><strong id="whitelistCount">—</strong><span>Whitelisted players</span></div>
-                <div class="stat"><strong id="operatorCount">—</strong><span>Operators</span></div>
-                <div class="stat"><strong id="apiStatusText">…</strong><span>API status</span></div>
-            </div>
-        </div>
-        <aside class="status-card hero-card">
-            <div>
-                <h2>Server controls preview</h2>
-                <p class="panel-note">Placeholders for future start, stop, restart, logs, and resource controls.</p>
-            </div>
-            <div>
-                <div class="status-row"><span>Frontend</span><b class="pill online">Loaded</b></div>
-                <div class="status-row"><span>Authentication</span><b class="pill warn">Disabled</b></div>
-                <div class="status-row"><span>API</span><b class="pill info" id="apiStatusPill">Checking</b></div>
-            </div>
-        </aside>
-    </section>
-
-    <section class="grid">
-        <aside class="panel">
-            <h2>Add a player</h2>
-            <p class="panel-note">Enter a Java username, then add the account to the whitelist or operators list.</p>
-            <form class="form" id="playerForm">
-                <div class="field">
-                    <label for="username">Minecraft username</label>
-                    <input id="username" name="username" placeholder="Example: Notch" autocomplete="off" required>
-                </div>
-                <div class="button-row">
-                    <button class="btn btn-primary" type="submit" data-action="whitelist">Add whitelist</button>
-                    <button class="btn btn-secondary" type="submit" data-action="operators">Make operator</button>
-                </div>
-                <button class="btn btn-ghost" type="button" id="refreshButton">Refresh lists</button>
-                <div class="message" id="message" role="status" aria-live="polite"></div>
-            </form>
-            <p class="footer-note">Tip: run the API behind the included Caddy reverse proxy so browser requests use the same origin at <code>/api</code>.</p>
-        </aside>
-
-        <section class="panel">
-            <div class="toolbar">
-                <div class="tabs" role="tablist" aria-label="Player lists">
-                    <button class="tab active" type="button" data-tab="whitelist">Whitelist</button>
-                    <button class="tab" type="button" data-tab="operators">Operators</button>
-                </div>
-                <input class="search" id="search" placeholder="Filter players or UUIDs" aria-label="Filter players">
-            </div>
-            <div class="table-wrap">
-                <table>
-                    <thead><tr><th>Player</th><th>UUID</th><th>List</th><th>Action</th></tr></thead>
-                    <tbody id="playersBody"><tr><td class="empty" colspan="4">Loading players…</td></tr></tbody>
-                </table>
-            </div>
-        </section>
-    </section>
+<section class="hero"><div class="hero-card"><p class="kicker">No-auth server console</p><h1>Manage the API and Minecraft map from one web interface.</h1><p class="lead">A lightweight front end for every existing API endpoint: player lists, anti-xray, server properties, API diagnostics, and the Dynmap map server. Authentication is intentionally not included, so only expose this on trusted networks.</p><div class="quick-stats"><div class="stat"><strong id="whitelistCount">—</strong><span>Whitelisted</span></div><div class="stat"><strong id="operatorCount">—</strong><span>Operators</span></div><div class="stat"><strong id="propertyCount">—</strong><span>Properties</span></div><div class="stat"><strong id="apiStatusText">…</strong><span>API status</span></div></div></div><aside class="status-card hero-card"><div><h2>Connection status</h2><p class="panel-note">This page uses the same-origin <code>/api</code> reverse proxy and embeds Dynmap from <code>/map/</code>.</p></div><div><div class="status-row"><span>Frontend</span><b class="pill online">Loaded</b></div><div class="status-row"><span>Authentication</span><b class="pill warn">Disabled</b></div><div class="status-row"><span>API</span><b class="pill info" id="apiStatusPill">Checking</b></div><div class="status-row"><span>Map server</span><b class="pill info">/map/</b></div></div></aside></section>
+<section class="grid"><aside class="panel"><h2>Actions</h2><p class="panel-note">Use these controls to call the existing API without changing backend behavior.</p><form class="form" id="playerForm"><div class="field"><label for="username">Minecraft username</label><input id="username" name="username" placeholder="Example: Notch" autocomplete="off" required></div><div class="button-row"><button class="btn btn-primary" type="submit" data-action="whitelist">Add whitelist</button><button class="btn btn-secondary" type="submit" data-action="operators">Make operator</button></div></form><h3>Anti-xray</h3><div class="button-row"><button class="btn btn-primary" type="button" data-antixray="true">Enable</button><button class="btn btn-ghost" type="button" data-antixray="false">Disable</button></div><h3>Update one property</h3><form class="form" id="propertyForm"><div class="field"><label for="propertyKey">Property</label><select id="propertyKey"></select></div><div class="field"><label for="propertyValue">Value</label><input id="propertyValue" placeholder="Select a property first"></div><button class="btn btn-secondary" type="submit">Save property</button></form><h3>Bulk update properties</h3><form class="form" id="bulkForm"><div class="split"><div class="field"><label for="bulkKeyA">Property</label><select id="bulkKeyA"></select></div><div class="field"><label for="bulkValueA">Value</label><input id="bulkValueA"></div></div><div class="split"><div class="field"><label for="bulkKeyB">Property</label><select id="bulkKeyB"></select></div><div class="field"><label for="bulkValueB">Value</label><input id="bulkValueB"></div></div><button class="btn btn-ghost" type="submit">Patch selected values</button></form><button class="btn btn-ghost" type="button" id="refreshButton" style="width:100%;margin-top:12px">Refresh all data</button><div class="message" id="message" role="status" aria-live="polite"></div><p class="footer-note">Tip: the included Caddy config routes <code>/api/*</code> to the Express API and <code>/map/*</code> to Dynmap.</p></aside>
+<section class="panel"><div class="toolbar"><div class="tabs" role="tablist" aria-label="Management sections"><button class="tab active" type="button" data-tab="players">Players</button><button class="tab" type="button" data-tab="properties">Properties</button><button class="tab" type="button" data-tab="map">Map</button><button class="tab" type="button" data-tab="diagnostics">Diagnostics</button></div><input class="search" id="search" placeholder="Filter current table" aria-label="Filter current table"></div><div id="playersView"><div class="tabs"><button class="tab active" type="button" data-list="whitelist">Whitelist</button><button class="tab" type="button" data-list="operators">Operators</button></div><div class="table-wrap"><table><thead><tr><th>Player</th><th>UUID</th><th>List</th><th>Action</th></tr></thead><tbody id="playersBody"><tr><td class="empty" colspan="4">Loading players…</td></tr></tbody></table></div></div><div id="propertiesView" class="hidden"><div class="table-wrap"><table><thead><tr><th>Property</th><th>Value</th><th>Action</th></tr></thead><tbody id="propertiesBody"><tr><td class="empty" colspan="3">Loading properties…</td></tr></tbody></table></div></div><div id="mapView" class="hidden"><iframe class="map-frame" src="/map/" title="Minecraft Dynmap"></iframe></div><div id="diagnosticsView" class="hidden"><h2>API diagnostics</h2><p class="panel-note" id="diagnosticText">Loading diagnostics…</p><div class="endpoint-list"><div class="endpoint"><span>GET</span><code>/api/test</code></div><div class="endpoint"><span>GET/POST/DELETE</span><code>/api/whitelist</code></div><div class="endpoint"><span>GET/POST/DELETE</span><code>/api/operators</code></div><div class="endpoint"><span>GET/PUT</span><code>/api/antixray</code></div><div class="endpoint"><span>GET/PATCH</span><code>/api/server/properties</code></div><div class="endpoint"><span>GET/PUT</span><code>/api/server/properties/:key</code></div></div></div></section></section>
 </main>
 <script>
-const state={activeTab:"whitelist",whitelist:[],operators:[],filter:""};
-const apiBase="";
-const endpoints={whitelist:"/api/whitelist",operators:"/api/operators"};
-const body=document.getElementById("playersBody");
+const state={activeTab:"players",activeList:"whitelist",whitelist:[],operators:[],properties:{},antiXray:null,diagnostics:null,filter:""};
+const endpoints={whitelist:"/api/whitelist",operators:"/api/operators",antiXray:"/api/antixray",properties:"/api/server/properties",test:"/api/test"};
 const message=document.getElementById("message");
-const username=document.getElementById("username");
-
-function formatUuid(uuid){
-    const clean=(uuid||"").replace(/-/g,"");
-    if(clean.length!==32) return uuid||"Unknown";
-    return `${clean.slice(0,8)}-${clean.slice(8,12)}-${clean.slice(12,16)}-${clean.slice(16,20)}-${clean.slice(20)}`;
-}
-function avatar(uuid){return `https://crafatar.com/avatars/${(uuid||"").replace(/-/g,"")}?size=80&overlay`;}
-function setMessage(text,type="info"){
-    message.textContent=text;
-    message.className=`message show ${type}`;
-}
-function clearMessage(){message.className="message";message.textContent="";}
-function setLoading(isLoading){document.querySelectorAll("button").forEach(button=>button.disabled=isLoading);}
-async function request(path,options){
-    const response=await fetch(`${apiBase}${path}`,{headers:{"Content-Type":"application/json"},...options});
-    const payload=await response.json().catch(()=>({}));
-    if(!response.ok) throw new Error(payload.error||"Request failed");
-    return payload;
-}
-async function loadData(){
-    document.getElementById("apiStatusPill").textContent="Checking";
-    try{
-        const [whitelist,operators]=await Promise.all([request(endpoints.whitelist),request(endpoints.operators)]);
-        state.whitelist=Array.isArray(whitelist)?whitelist:[];
-        state.operators=Array.isArray(operators)?operators:[];
-        document.getElementById("whitelistCount").textContent=state.whitelist.length;
-        document.getElementById("operatorCount").textContent=state.operators.length;
-        document.getElementById("apiStatusText").textContent="OK";
-        document.getElementById("apiStatusPill").textContent="Online";
-        document.getElementById("apiStatusPill").className="pill online";
-        renderRows();
-    }catch(error){
-        document.getElementById("apiStatusText").textContent="Off";
-        document.getElementById("apiStatusPill").textContent="Offline";
-        document.getElementById("apiStatusPill").className="pill warn";
-        body.innerHTML=`<tr><td class="empty" colspan="4">Unable to load API data. ${error.message}</td></tr>`;
-    }
-}
-function renderRows(){
-    const rows=state[state.activeTab].filter(player=>`${player.name||""} ${player.uuid||""}`.toLowerCase().includes(state.filter));
-    if(rows.length===0){
-        body.innerHTML=`<tr><td class="empty" colspan="4">No ${state.activeTab} players found.</td></tr>`;
-        return;
-    }
-    body.innerHTML=rows.map(player=>`
-        <tr>
-            <td><div class="player"><img class="avatar" src="${avatar(player.uuid)}" alt=""><span>${player.name||"Unknown"}</span></div></td>
-            <td class="uuid">${formatUuid(player.uuid)}</td>
-            <td><span class="pill ${state.activeTab==="operators"?"info":"online"}">${state.activeTab==="operators"?"Operator":"Whitelisted"}</span></td>
-            <td><button class="btn-danger" type="button" data-remove="${state.activeTab}" data-uuid="${player.uuid}">Remove</button></td>
-        </tr>`).join("");
-}
-document.getElementById("playerForm").addEventListener("submit",async event=>{
-    event.preventDefault();
-    const action=event.submitter.dataset.action;
-    const name=username.value.trim();
-    if(!name) return;
-    setLoading(true);clearMessage();
-    try{
-        const result=await request(endpoints[action],{method:"POST",body:JSON.stringify({username:name})});
-        setMessage(`${result.player.name} added to ${action=== "operators"?"operators":"whitelist"}.`,"success");
-        username.value="";
-        await loadData();
-    }catch(error){setMessage(error.message,"error");}
-    finally{setLoading(false);}
-});
+function formatUuid(uuid){const clean=(uuid||"").replace(/-/g,"");return clean.length===32?`${clean.slice(0,8)}-${clean.slice(8,12)}-${clean.slice(12,16)}-${clean.slice(16,20)}-${clean.slice(20)}`:uuid||"Unknown"}
+function avatar(uuid){return `https://crafatar.com/avatars/${(uuid||"").replace(/-/g,"")}?size=80&overlay`}
+function setMessage(text,type="info"){message.textContent=text;message.className=`message show ${type}`}
+function clearMessage(){message.className="message";message.textContent=""}
+function setLoading(isLoading){document.querySelectorAll("button").forEach(button=>button.disabled=isLoading)}
+async function request(path,options){const response=await fetch(path,{headers:{"Content-Type":"application/json"},...options});const payload=await response.json().catch(()=>({}));if(!response.ok)throw new Error(payload.error||"Request failed");return payload}
+async function loadData(){document.getElementById("apiStatusPill").textContent="Checking";try{const [whitelist,operators,antiXray,properties,diagnostics]=await Promise.all([request(endpoints.whitelist),request(endpoints.operators),request(endpoints.antiXray),request(endpoints.properties),request(endpoints.test)]);Object.assign(state,{whitelist:Array.isArray(whitelist)?whitelist:[],operators:Array.isArray(operators)?operators:[],antiXray:antiXray.enabled,properties:properties||{},diagnostics});document.getElementById("whitelistCount").textContent=state.whitelist.length;document.getElementById("operatorCount").textContent=state.operators.length;document.getElementById("propertyCount").textContent=Object.keys(state.properties).length;document.getElementById("apiStatusText").textContent="OK";document.getElementById("apiStatusPill").textContent="Online";document.getElementById("apiStatusPill").className="pill online";fillPropertySelects();renderAll()}catch(error){document.getElementById("apiStatusText").textContent="Off";document.getElementById("apiStatusPill").textContent="Offline";document.getElementById("apiStatusPill").className="pill bad";setMessage(`Unable to load API data: ${error.message}`,"error")}}
+function fillPropertySelects(){const keys=Object.keys(state.properties).sort();["propertyKey","bulkKeyA","bulkKeyB"].forEach(id=>{const select=document.getElementById(id);select.innerHTML=keys.map(key=>`<option value="${key}">${key}</option>`).join("");});syncPropertyValue()}
+function syncPropertyValue(){const key=document.getElementById("propertyKey").value;document.getElementById("propertyValue").value=state.properties[key]??""}
+function renderAll(){renderPlayers();renderProperties();renderDiagnostics()}
+function renderPlayers(){const body=document.getElementById("playersBody");const rows=state[state.activeList].filter(player=>`${player.name||""} ${player.uuid||""}`.toLowerCase().includes(state.filter));if(!rows.length){body.innerHTML=`<tr><td class="empty" colspan="4">No ${state.activeList} players found.</td></tr>`;return}body.innerHTML=rows.map(player=>`<tr><td><div class="player"><img class="avatar" src="${avatar(player.uuid)}" alt=""><span>${player.name||"Unknown"}</span></div></td><td class="uuid">${formatUuid(player.uuid)}</td><td><span class="pill ${state.activeList==="operators"?"info":"online"}">${state.activeList==="operators"?"Operator":"Whitelisted"}</span></td><td><button class="btn-danger" type="button" data-remove="${state.activeList}" data-uuid="${player.uuid}">Remove</button></td></tr>`).join("")}
+function renderProperties(){const body=document.getElementById("propertiesBody");const rows=Object.entries(state.properties).filter(([key,value])=>`${key} ${value}`.toLowerCase().includes(state.filter)).sort(([a],[b])=>a.localeCompare(b));if(!rows.length){body.innerHTML='<tr><td class="empty" colspan="3">No properties found.</td></tr>';return}body.innerHTML=rows.map(([key,value])=>`<tr><td><b>${key}</b></td><td class="uuid">${value}</td><td><button class="btn btn-ghost" type="button" data-edit-property="${key}">Edit</button></td></tr>`).join("")}
+function renderDiagnostics(){const text=document.getElementById("diagnosticText");if(!state.diagnostics){text.textContent="Diagnostics unavailable.";return}text.textContent=`API responded from ${state.diagnostics.ip} using ${state.diagnostics.protocol} for host ${state.diagnostics.hostname}. Anti-xray is ${state.antiXray?"enabled":"disabled"}.`}
+document.getElementById("playerForm").addEventListener("submit",async event=>{event.preventDefault();const action=event.submitter.dataset.action;const name=document.getElementById("username").value.trim();if(!name)return;setLoading(true);clearMessage();try{const result=await request(endpoints[action],{method:"POST",body:JSON.stringify({username:name})});setMessage(`${result.player.name} added to ${action==="operators"?"operators":"whitelist"}.`, "success");document.getElementById("username").value="";await loadData()}catch(error){setMessage(error.message,"error")}finally{setLoading(false)}});
+document.querySelectorAll("[data-antixray]").forEach(button=>button.addEventListener("click",async()=>{setLoading(true);clearMessage();try{const enabled=button.dataset.antixray==="true";await request(endpoints.antiXray,{method:"PUT",body:JSON.stringify({enabled})});setMessage(`Anti-xray ${enabled?"enabled":"disabled"}.`,"success");await loadData()}catch(error){setMessage(error.message,"error")}finally{setLoading(false)}}));
+document.getElementById("propertyKey").addEventListener("change",syncPropertyValue);
+document.getElementById("propertyForm").addEventListener("submit",async event=>{event.preventDefault();setLoading(true);clearMessage();try{const key=document.getElementById("propertyKey").value;const value=document.getElementById("propertyValue").value;await request(`${endpoints.properties}/${encodeURIComponent(key)}`,{method:"PUT",body:JSON.stringify({value})});setMessage(`${key} updated.`,"success");await loadData()}catch(error){setMessage(error.message,"error")}finally{setLoading(false)}});
+document.getElementById("bulkForm").addEventListener("submit",async event=>{event.preventDefault();setLoading(true);clearMessage();try{const updates={};[["bulkKeyA","bulkValueA"],["bulkKeyB","bulkValueB"]].forEach(([keyId,valueId])=>{const key=document.getElementById(keyId).value;const value=document.getElementById(valueId).value;if(key&&value!=="")updates[key]=value});await request(endpoints.properties,{method:"PATCH",body:JSON.stringify(updates)});setMessage("Selected properties updated.","success");await loadData()}catch(error){setMessage(error.message,"error")}finally{setLoading(false)}});
 document.getElementById("refreshButton").addEventListener("click",loadData);
-document.querySelectorAll(".tab").forEach(tab=>tab.addEventListener("click",()=>{
-    state.activeTab=tab.dataset.tab;
-    document.querySelectorAll(".tab").forEach(item=>item.classList.toggle("active",item===tab));
-    renderRows();
-}));
-document.getElementById("search").addEventListener("input",event=>{state.filter=event.target.value.toLowerCase();renderRows();});
-body.addEventListener("click",async event=>{
-    const button=event.target.closest("[data-remove]");
-    if(!button) return;
-    setLoading(true);clearMessage();
-    try{
-        await request(`${endpoints[button.dataset.remove]}/${button.dataset.uuid}`,{method:"DELETE"});
-        setMessage("Player removed.","success");
-        await loadData();
-    }catch(error){setMessage(error.message,"error");}
-    finally{setLoading(false);}
-});
+document.querySelectorAll("[data-tab]").forEach(tab=>tab.addEventListener("click",()=>{state.activeTab=tab.dataset.tab;document.querySelectorAll("[data-tab]").forEach(item=>item.classList.toggle("active",item===tab));["players","properties","map","diagnostics"].forEach(name=>document.getElementById(`${name}View`).classList.toggle("hidden",name!==state.activeTab));renderAll()}));
+document.querySelectorAll("[data-list]").forEach(tab=>tab.addEventListener("click",()=>{state.activeList=tab.dataset.list;document.querySelectorAll("[data-list]").forEach(item=>item.classList.toggle("active",item===tab));renderPlayers()}));
+document.getElementById("search").addEventListener("input",event=>{state.filter=event.target.value.toLowerCase();renderAll()});
+document.getElementById("playersBody").addEventListener("click",async event=>{const button=event.target.closest("[data-remove]");if(!button)return;setLoading(true);clearMessage();try{await request(`${endpoints[button.dataset.remove]}/${button.dataset.uuid}`,{method:"DELETE"});setMessage("Player removed.","success");await loadData()}catch(error){setMessage(error.message,"error")}finally{setLoading(false)}});
+document.getElementById("propertiesBody").addEventListener("click",event=>{const button=event.target.closest("[data-edit-property]");if(!button)return;document.getElementById("propertyKey").value=button.dataset.editProperty;syncPropertyValue();window.scrollTo({top:document.getElementById("propertyForm").offsetTop-20,behavior:"smooth"})});
 loadData();
 </script>
 </body>
