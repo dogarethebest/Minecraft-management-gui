@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
+
+cd /opt/Minecraft-management-gui
 set -e
 
 MIN_RAM_GB=7
-
 
 # ----------------------------
 # RAM CHECK

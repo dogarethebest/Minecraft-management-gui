@@ -37,4 +37,4 @@ rm -rf build/opt/Minecraft-management-gui/compiler
 
 dpkg-deb --build build $DEB_NAME
 
-cp $DEB_NAME dis
+mv $DEB_NAME dis
