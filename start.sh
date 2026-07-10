@@ -64,33 +64,12 @@ cleanup() {
 }
 
 trap cleanup SIGINT SIGTERM EXIT
-
-
 echo "Starting services..."
 
 sleep 2
 
-
-# Install mode
-if [[ " $* " == *" --install "* ]]; then
-    sleep 100
-else
-
-    # Start Minecraft as nicholas
-    echo "Starting Minecraft..."
-
-    setsid sudo -u nicholas bash -c '
-        cd mc
-        exec java -Xmx4096M -Xms4096M -jar paper.jar nogui
-    ' &
-
-    MC_PID=$!
-    PIDS+=("$MC_PID")
-
-    echo "$MC_PID" > tmp/pid
-fi
-
-
+cd mc
+exec java -Xmx4096M -Xms4096M -jar paper.jar nogui
 
 # Domain mode
 if [[ " $* " == *" --Domain "* ]]; then
@@ -109,7 +88,6 @@ else
         exit 1
     fi
 
-
     # Replace any IPv4 address before :443
     sed -i -E "s/[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:443/$SERVER_IP:443/g" "$CADDYFILE"
 
@@ -117,34 +95,27 @@ else
 
 fi
 
-
+chown -R root:root /opt/Minecraft-management-gui
 sleep 110
-
 
 # Start API as nicholas
 echo "Starting API..."
 
-setsid sudo -u nicholas bash -c '
-    exec npm run start_api
-' &
+exec npm run start_api
 
 API_PID=$!
 PIDS+=("$API_PID")
 
-
 # Start frontend as nicholas
 echo "Starting frontend..."
 
-setsid sudo -u nicholas bash -c '
-    exec npm run start_static_ui
-' &
+npm run start_static_ui
+
 
 FRONTEND_PID=$!
 PIDS+=("$FRONTEND_PID")
 
-
 sleep 5
-
 
 # Start Caddy as root
 echo "Starting Caddy..."
@@ -162,7 +133,5 @@ echo "Minecraft PID: $MC_PID"
 echo "API PID:       $API_PID"
 echo "Frontend PID:  $FRONTEND_PID"
 echo "Caddy PID:     $CADDY_PID"
-
-
 
 wait
