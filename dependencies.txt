@@ -1,2 +1,1 @@
-apt update
-apt install -y  jq openjdk-21-jre npm
+jq openjdk-21-jre npm

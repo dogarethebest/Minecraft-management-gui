@@ -5,6 +5,7 @@ rm -rf build
 mkdir -p build/DEBIAN
 mkdir -p build/opt/Minecraft-management-gui
 mkdir -p build/lib/systemd/system
+mkdir -p dis
 
 cp resources/control build/DEBIAN/control
 cp resources/postinst build/DEBIAN/postinst
@@ -35,3 +36,5 @@ cd compiler
 rm -rf build/opt/Minecraft-management-gui/compiler
 
 dpkg-deb --build build $DEB_NAME
+
+cp $DEB_NAME dis
