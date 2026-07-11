@@ -1,10 +1,10 @@
 Package: minecraft-management-gui
-Version: 1.0.0-24
+Version: 1.0.0-25
 Section: utils
 Priority: optional
 Architecture: amd64
 Maintainer: Nicholas
-Depends: curl, jq, openjdk-21-jre, npm, git, make, gcc
+Depends: curl, jq, openjdk-25-jre, npm, git, gcc
 Description: Minecraft server management GUI
  A web-based management interface for controlling Minecraft servers.
  
