@@ -69,59 +69,6 @@ echo "Installing dependencies..."
 
 npm install
 
-# ----------------------------
-# DOWNLOAD PAPER
-# ----------------------------
-
-echo "Finding latest Paper version..."
-
-API="https://fill.papermc.io/v3/projects/paper"
-
-
-MC_VERSION=$(
-curl -fsSL "$API" |
-jq -r '
-    .versions
-    | keys
-    | map(select(startswith("1.")))
-    | sort_by(split(".") | map(tonumber))
-    | last
-'
-)
-
-
-echo "Minecraft version: $MC_VERSION"
-
-
-echo "Finding latest Paper build..."
-
-
-curl -fsSL \
-"$API/versions/$MC_VERSION/builds" \
--o response.json
-
-
-DOWNLOAD_URL=$(jq -r '.. | objects | .url? // empty' response.json | head -n1)
-
-
-if [ -z "$DOWNLOAD_URL" ]; then
-    echo "ERROR: Could not find Paper download URL"
-    exit 1
-fi
-
-
-echo "Downloading:"
-echo "$DOWNLOAD_URL"
-
-
-curl -L \
--A "MinecraftManagement/1.0" \
--o paper.jar \
-"$DOWNLOAD_URL"
-
-
-rm response.json
-
 
 # ----------------------------
 # CREATE MINECRAFT SERVER
@@ -130,13 +77,6 @@ rm response.json
 echo "Creating Minecraft directory..."
 
 mkdir -p mc
-
-
-mv paper.jar mc/paper.jar
-
-
-cp preset/eula.txt mc/eula.txt
-cp preset/server.properties mc/server.properties
 
 
 chmod +x mc/paper.jar

@@ -86,8 +86,8 @@ echo "Starting services..."
 sleep 2
 
 cd mc
-exec java -Xmx4096M -Xms4096M -jar paper.jar nogui
-
+java -Xmx4096M -Xms4096M -jar paper.jar nogui&
+cd ..
 # Domain mode
 if [[ " $* " == *" --Domain "* ]]; then
     echo ""
@@ -112,23 +112,19 @@ else
 
 fi
 
-chown -R root:root /opt/Minecraft-management-gui
-sleep 110
+chown -R root:root $SCRIPT_DIR
+sleep 40
 
-# Start API as nicholas
 echo "Starting API..."
 
-exec npm run start_api
+npm run start_api&
 
 API_PID=$!
 PIDS+=("$API_PID")
 
-# Start frontend as nicholas
 echo "Starting frontend..."
 
-npm run start_static_ui
-
-
+npm run start_static_ui&
 FRONTEND_PID=$!
 PIDS+=("$FRONTEND_PID")
 
@@ -138,11 +134,8 @@ sleep 5
 echo "Starting Caddy..."
 
 setsid ./caddy/caddy run --config ./caddy/Caddyfile &
-
 CADDY_PID=$!
 PIDS+=("$CADDY_PID")
-
-mcrcon   -H 127.0.0.1   -P 3002   -p "ruf3irfhgi3"   "dynmap fullrender world"
 
 echo ""
 echo "Running:"
