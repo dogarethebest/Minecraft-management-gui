@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-
-
 set -euo pipefail
 
 APP_DIR=/opt/Minecraft-management-gui
+APP_USER=minecraft-manager
+APP_GROUP=minecraft-manager
+APP_HOME=/var/lib/minecraft-manager
 LOG_DIR=/var/log/minecraft-management-gui
 INSTALL_LOG="$LOG_DIR/install.log"
 
@@ -14,14 +15,19 @@ chmod 0644 "$INSTALL_LOG"
 exec > >(tee -a "$INSTALL_LOG") 2>&1
 
 echo "==== Minecraft Management GUI install started at $(date -Is) ===="
+
+if ! getent group "$APP_GROUP" >/dev/null; then
+    groupadd --system "$APP_GROUP"
+fi
+
+if ! id "$APP_USER" >/dev/null 2>&1; then
+    useradd --system --gid "$APP_GROUP" --home-dir "$APP_HOME" --create-home --shell /usr/sbin/nologin "$APP_USER"
+fi
+
+mkdir -p "$APP_HOME" "$APP_DIR/mc" "$APP_DIR/mc/plugins" "$LOG_DIR"
 cd "$APP_DIR"
 
 MIN_RAM_GB=7
-
-# ----------------------------
-# RAM CHECK
-# ----------------------------
-
 TOTAL_RAM_BYTES=$(awk '/MemTotal/ {print $2 * 1024}' /proc/meminfo)
 TOTAL_RAM_GB=$((TOTAL_RAM_BYTES / 1024 / 1024 / 1024))
 
@@ -29,33 +35,39 @@ if [[ " $* " == *" --BYRR "* ]]; then
     echo "RAM check bypassed with --BYRR"
     echo "This is an unsupported config. Run at your own risk."
 else
-
     MIN_RAM_BYTES=$((MIN_RAM_GB * 1024 * 1024 * 1024))
-
     if [ "$TOTAL_RAM_BYTES" -lt "$MIN_RAM_BYTES" ]; then
         echo "ERROR: Not enough RAM."
         echo "Required: ${MIN_RAM_GB}GB"
         echo "Detected: ${TOTAL_RAM_GB}GB"
-        echo ""
         echo "If you want to bypass this check, run:"
-        echo "./install.sh --BYRR"
+        echo "sudo dpkg --configure minecraft-management-gui -- --BYRR"
         exit 1
     fi
-
     echo "RAM check passed."
-
 fi
 
 echo "Detected RAM: ${TOTAL_RAM_GB}GB"
 
 echo "Installing npm dependencies..."
- 
-npm install
+npm install --omit=dev
 
-cp preset/server.properties mc/server.properties
+if [ -f preset/server.properties ] && [ ! -f mc/server.properties ]; then
+    cp preset/server.properties mc/server.properties
+fi
 
+chown -R root:root "$APP_DIR"
+chown -R "$APP_USER:$APP_GROUP" "$APP_DIR/mc" "$APP_DIR/caddy" "$APP_HOME" "$LOG_DIR"
+chmod 0755 "$APP_DIR/start.sh" "$APP_DIR/caddy/caddy" 2>/dev/null || true
+find "$APP_DIR/mc" "$APP_DIR/caddy" "$APP_HOME" "$LOG_DIR" -type d -exec chmod 0755 {} \;
+find "$APP_DIR/mc" "$APP_DIR/caddy" "$APP_HOME" "$LOG_DIR" -type f -exec chmod u+rw,g+rw,o+r {} \;
 
+if command -v setcap >/dev/null 2>&1 && [ -f "$APP_DIR/caddy/caddy" ]; then
+    setcap 'cap_net_bind_service=+ep' "$APP_DIR/caddy/caddy" || echo "WARNING: Could not grant low-port bind capability to Caddy."
+fi
+
+systemctl daemon-reload
 systemctl enable minecraft-manager.service
-systemctl start minecraft-manager.service
+systemctl restart minecraft-manager.service
 
 echo "==== Minecraft Management GUI install finished at $(date -Is) ===="

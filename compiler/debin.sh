@@ -107,11 +107,15 @@ cp "$REPO_ROOT/mc/plugins/BlueMap/webserver.conf" \
 #--------------------------------------------------
 
 for item in \
-    api \
+    code \
+    caddy \
     config \
     database \
     routes \
     scripts \
+    preset \
+    start.sh \
+    install.sh \
     package.json \
     package-lock.json \
     README.md
@@ -129,6 +133,8 @@ find "$BUILD_DIR" -type d -exec chmod 755 {} \;
 find "$BUILD_DIR" -type f -exec chmod 644 {} \;
 
 chmod 755 "$BUILD_DIR/DEBIAN/postinst"
+chmod 755 "$APP_DIR/start.sh" 2>/dev/null || true
+chmod 755 "$APP_DIR/caddy/caddy" 2>/dev/null || true
 
 #--------------------------------------------------
 # Build package

@@ -37,28 +37,23 @@ echo "Detected RAM: ${TOTAL_RAM_GB}GB"
 
 
 # ----------------------------
-# ROOT CHECK
+# INSTALL USER
 # ----------------------------
 
-if [[ " $* " == *" --BYROOT "* ]]; then
-
-    echo "Root check bypassed with --BYROOT"
-    echo "This is an unsupported config. Run at your own risk."
-
-else
-
-    if [ "$(id -u)" -ne 0 ]; then
-        echo "ERROR: This script must be run as root."
-        echo "Run with sudo or use --BYROOT to bypass this check."
+if [ "$(id -u)" -eq 0 ]; then
+    INSTALL_USER=${SUDO_USER:-${MINECRAFT_MANAGER_USER:-}}
+    if [ -z "$INSTALL_USER" ] || [ "$INSTALL_USER" = "root" ]; then
+        echo "ERROR: Do not install the desktop copy as root unless SUDO_USER or MINECRAFT_MANAGER_USER is set."
+        echo "Example: sudo MINECRAFT_MANAGER_USER=$USER ./install.sh"
         exit 1
     fi
-
-    echo "Running as root."
-
+    INSTALL_GROUP=$(id -gn "$INSTALL_USER")
+else
+    INSTALL_USER=$(id -un)
+    INSTALL_GROUP=$(id -gn)
 fi
 
-
-echo "Continuing installation..."
+echo "Continuing installation for $INSTALL_USER:$INSTALL_GROUP..."
 
 
 # ----------------------------
@@ -67,7 +62,13 @@ echo "Continuing installation..."
 
 echo "Installing dependencies..."
 
-npm install
+mkdir -p node_modules logs
+chown -R "$INSTALL_USER:$INSTALL_GROUP" node_modules logs package-lock.json 2>/dev/null || true
+if [ "$(id -u)" -eq 0 ]; then
+    runuser -u "$INSTALL_USER" -- npm install
+else
+    npm install
+fi
 
 
 # ----------------------------
@@ -79,22 +80,31 @@ echo "Creating Minecraft directory..."
 mkdir -p mc
 
 
-chmod +x mc/paper.jar
+[ -f mc/paper.jar ] && chmod +x mc/paper.jar
 
 
-chown -R nicholas:nicholas mc
+chown -R "$INSTALL_USER:$INSTALL_GROUP" mc logs 2>/dev/null || true
 
 
 echo "Minecraft files installed."
 
 echo "Installing Dynmap plugin..."
 mkdir -p mc/plugins
-cp preset/dynmap.jar mc/plugins/dynmap.jar
+if [ -f preset/dynmap.jar ]; then
+    cp preset/dynmap.jar mc/plugins/dynmap.jar
+else
+    echo "WARNING: preset/dynmap.jar not found; skipping Dynmap plugin copy."
+fi
+chown -R "$INSTALL_USER:$INSTALL_GROUP" mc logs 2>/dev/null || true
 
 git clone https://github.com/Tiiffi/mcrcon.git
 cd mcrcon
 make
-sudo make install
+if [ "$(id -u)" -eq 0 ]; then
+    make install
+else
+    sudo make install
+fi
 cd ..
 rm -rf mcrcon
 

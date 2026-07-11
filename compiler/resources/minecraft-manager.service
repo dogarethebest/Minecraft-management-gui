@@ -8,7 +8,10 @@ WorkingDirectory=/opt/Minecraft-management-gui
 ExecStart=/opt/Minecraft-management-gui/start.sh
 Restart=always
 RestartSec=5
-User=root
+User=minecraft-manager
+Group=minecraft-manager
+Environment=HOME=/var/lib/minecraft-manager
+Environment=MINECRAFT_MANAGER_LOG_DIR=/var/log/minecraft-management-gui
 
 [Install]
 WantedBy=multi-user.target
