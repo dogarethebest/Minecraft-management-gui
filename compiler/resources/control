@@ -4,7 +4,7 @@ Section: utils
 Priority: optional
 Architecture: amd64
 Maintainer: Nicholas
-Depends: curl, jq, openjdk-21-jre, npm
+Depends: curl, jq, openjdk-21-jre, npm, git, make, gcc
 Description: Minecraft server management GUI
  A web-based management interface for controlling Minecraft servers.
  

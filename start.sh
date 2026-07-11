@@ -1,5 +1,22 @@
-#!/bin/bash
-cd "$(dirname "$0")"
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+LOG_DIR=/var/log/minecraft-management-gui
+STARTUP_LOG="$LOG_DIR/startup.log"
+
+if ! mkdir -p "$LOG_DIR" 2>/dev/null; then
+    LOG_DIR="$SCRIPT_DIR/logs"
+    STARTUP_LOG="$LOG_DIR/startup.log"
+    mkdir -p "$LOG_DIR"
+fi
+touch "$STARTUP_LOG"
+chmod 0755 "$LOG_DIR"
+chmod 0644 "$STARTUP_LOG"
+exec > >(tee -a "$STARTUP_LOG") 2>&1
+
+echo "==== Minecraft Management GUI startup started at $(date -Is) ===="
+cd "$SCRIPT_DIR"
 MIN_RAM_GB=8
 
 echo "Checking system requirements..."

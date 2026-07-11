@@ -1,8 +1,20 @@
 #!/usr/bin/env bash
 
 
-cd /opt/Minecraft-management-gui
-set -e
+set -euo pipefail
+
+APP_DIR=/opt/Minecraft-management-gui
+LOG_DIR=/var/log/minecraft-management-gui
+INSTALL_LOG="$LOG_DIR/install.log"
+
+mkdir -p "$LOG_DIR"
+touch "$INSTALL_LOG"
+chmod 0755 "$LOG_DIR"
+chmod 0644 "$INSTALL_LOG"
+exec > >(tee -a "$INSTALL_LOG") 2>&1
+
+echo "==== Minecraft Management GUI install started at $(date -Is) ===="
+cd "$APP_DIR"
 
 MIN_RAM_GB=7
 
@@ -143,7 +155,13 @@ cp preset/server.properties mc/server.properties
 chmod +x mc/paper.jar
 
 
-chown -R nicholas:nicholas mc
+INSTALL_USER=${SUDO_USER:-root}
+if ! id -u "$INSTALL_USER" >/dev/null 2>&1; then
+    echo "Install user $INSTALL_USER does not exist; keeping Minecraft files owned by root."
+    INSTALL_USER=root
+fi
+INSTALL_GROUP=$(id -gn "$INSTALL_USER")
+chown -R "$INSTALL_USER:$INSTALL_GROUP" mc
 
 
 echo "Minecraft files installed."
@@ -151,13 +169,16 @@ echo "Minecraft files installed."
 echo "Installing Dynmap plugin..."
 mkdir -p mc/plugins
 cp preset/dynmap.jar mc/plugins/dynmap.jar
+chown -R "$INSTALL_USER:$INSTALL_GROUP" mc/plugins
 
 git clone https://github.com/Tiiffi/mcrcon.git
 cd mcrcon
 make
-sudo make install
+make install
 cd ..
 rm -rf mcrcon
 
 systemctl enable minecraft-manager.service
 systemctl start minecraft-manager.service
+
+echo "==== Minecraft Management GUI install finished at $(date -Is) ===="
