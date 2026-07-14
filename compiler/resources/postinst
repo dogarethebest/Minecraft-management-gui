@@ -71,3 +71,4 @@ systemctl enable minecraft-manager.service
 systemctl restart minecraft-manager.service
 
 echo "==== Minecraft Management GUI install finished at $(date -Is) ===="
+echo "log at $LOG_DIR"
